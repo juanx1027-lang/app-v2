@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark light">
+<script>(function(){try{var t=localStorage.getItem('oc_theme')||'dark';var e=t==='auto'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):t;document.documentElement.setAttribute('data-theme',e);document.documentElement.style.colorScheme=e;}catch(_){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<title>OmniCalc Studio</title>
+<meta name="description" content="OmniCalc Studio &mdash; herramientas acad&eacute;micas y cotidianas en un solo lugar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#08080b;
+ --surface:rgba(255,255,255,.04);
+ --surface2:#14141a;
+ --border:rgba(255,255,255,.09);
+ --border2:rgba(255,255,255,.17);
+ --text:#f2f3f7;
+ --muted:#a1a3b3;
+ --a1:#00b4d8;--a2:#7c3aed;
+ --primary:var(--a1);--primary2:var(--a2);
+ --success:#22c55e;--danger:#ef4444;
+ --shadow:0 22px 60px rgba(0,0,0,.45);
+ --shadow2:rgba(0,0,0,.5);
+ --headline:#ffffff;
+ --mix:#ffffff;
+ --onaccent:#06060a;
+ --field:#0c0c11;
+ --tile1:#101015;--tile2:#0e0e13;
+ --softest:rgba(255,255,255,.018);
+ --soft:rgba(255,255,255,.03);
+ --soft2:rgba(255,255,255,.05);
+ --soft3:rgba(255,255,255,.09);
+ --deep:rgba(0,0,0,.25);
+ --headerbg:rgba(8,8,11,.7);
+ --chip:rgba(255,255,255,.055);
+ --key1:rgba(255,255,255,.075);--key2:rgba(255,255,255,.02);
+ --panel1:rgba(255,255,255,.05);--panel2:rgba(255,255,255,.015);
+ --imgbg:#000000;
+ --danger-text:#fecaca;
+ --fd:'Sora','Segoe UI',system-ui,-apple-system,sans-serif;
+ --fu:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+ --fm:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+button,input,select{font:inherit}
+button{cursor:pointer;font-family:var(--fu)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--fu);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;transition:background .7s ease;background:
+ radial-gradient(900px 620px at 10% -8%,color-mix(in srgb,var(--a1) 24%,transparent),transparent 62%),
+ radial-gradient(820px 520px at 96% 2%,color-mix(in srgb,var(--a2) 20%,transparent),transparent 58%),
+ radial-gradient(700px 520px at 50% 112%,color-mix(in srgb,var(--a1) 11%,transparent),transparent 60%)}
+
+/* ---------- encabezado ---------- */
+.header{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:12px 22px;background:var(--headerbg);backdrop-filter:blur(22px) saturate(150%);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:11px;min-width:210px;font-family:var(--fd);font-weight:800;letter-spacing:-.02em;font-size:15px}
+.brand>div:last-child{line-height:1.15}
+.logo{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center;color:var(--onaccent);font-family:var(--fd);font-weight:900;font-size:14px;box-shadow:0 10px 30px color-mix(in srgb,var(--a1) 34%,transparent);transition:.6s}
+.brand small{display:block;color:var(--muted);font-family:var(--fu);font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;margin-top:2px}
+.quick{display:flex;gap:6px;align-items:center;flex:1}
+.quick button{background:transparent;border:1px solid transparent;color:var(--muted);padding:8px 11px;border-radius:10px;font-size:13px;font-weight:550;transition:.18s}
+.quick button:hover{background:var(--soft2);color:var(--text)}
+.account{display:flex;gap:10px;align-items:center}
+.sync{font-size:11.5px;color:var(--muted);font-family:var(--fm)}
+main{max-width:1180px;margin:auto;padding:26px 22px 80px}
+
+/* ---------- navegación ---------- */
+.navbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.navbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 14px;border-radius:12px;font-weight:600;font-size:13px;transition:.18s}
+.navbtn:hover{border-color:color-mix(in srgb,var(--a1) 55%,var(--border));background:color-mix(in srgb,var(--a1) 12%,transparent)}
+.crumbs{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-left:auto;font-size:12px}
+.crumb{background:none;border:0;color:var(--muted);font-size:12px;padding:2px 0;transition:.15s}
+.crumb:hover{color:color-mix(in srgb,var(--a1) 85%,var(--mix))}
+.crumb.current{color:var(--text);font-weight:650}
+.sep{color:var(--muted);opacity:.45}
+.screenhead{display:flex;align-items:center;gap:15px;margin:2px 0 24px}
+.sh-icon{width:58px;height:58px;flex:none;border-radius:18px;display:grid;place-items:center;font-size:25px;font-family:var(--fd);background:linear-gradient(145deg,color-mix(in srgb,var(--a1) 30%,transparent),color-mix(in srgb,var(--a2) 16%,transparent));border:1px solid color-mix(in srgb,var(--a1) 42%,transparent);box-shadow:0 14px 36px color-mix(in srgb,var(--a1) 18%,transparent)}
+.sh-title{display:block;font-family:var(--fd);font-size:clamp(24px,3.6vw,32px);font-weight:800;letter-spacing:-.03em;line-height:1.08}
+.sh-tag{display:block;color:var(--muted);font-size:13px;margin-top:5px;line-height:1.4}
+
+/* ---------- pantallas ---------- */
+.screen{display:none}
+.screen.active{display:block;animation:screenIn .36s cubic-bezier(.2,.8,.3,1)}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hero{margin-bottom:26px}
+.eyebrow{font-family:var(--fm);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:color-mix(in srgb,var(--a1) 85%,var(--mix))}
+.hero h1{font-family:var(--fd);font-size:clamp(34px,5.6vw,62px);line-height:1;letter-spacing:-.04em;margin:12px 0 14px;background:linear-gradient(100deg,var(--headline) 18%,color-mix(in srgb,var(--a1) 75%,var(--mix)) 58%,color-mix(in srgb,var(--a2) 75%,var(--mix)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:650px;color:var(--muted);line-height:1.68;margin:0;font-size:15px}
+
+/* ---------- cuadrícula de cuadros ---------- */
+.hub{display:grid;gap:16px;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));grid-auto-rows:minmax(170px,1fr);min-height:min(62vh,540px);align-content:stretch}
+.tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:7px;padding:20px;border-radius:20px;border:1px solid var(--border);color:var(--text);overflow:hidden;background:linear-gradient(150deg,color-mix(in srgb,var(--a1) 14%,var(--tile1)),var(--tile2) 72%);transition:transform .24s cubic-bezier(.2,.8,.3,1),border-color .24s,box-shadow .24s;animation:tileIn .46s cubic-bezier(.2,.8,.3,1) backwards}
+@keyframes tileIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.tile:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;transition:.25s;background:radial-gradient(440px 240px at 12% -10%,color-mix(in srgb,var(--a1) 26%,transparent),transparent 70%)}
+.tile:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--a1) 55%,transparent);box-shadow:0 26px 60px var(--shadow2),0 0 44px color-mix(in srgb,var(--a1) 16%,transparent)}
+.tile:hover:before{opacity:1}
+.tile:focus-visible{outline:2px solid var(--a1);outline-offset:3px}
+.tile-ghost{position:absolute;right:-14px;bottom:-30px;font-size:120px;line-height:1;opacity:.05;filter:grayscale(1);pointer-events:none;font-family:var(--fd);font-weight:800;transition:.3s}
+.tile:hover .tile-ghost{opacity:.09;transform:scale(1.06) rotate(-3deg)}
+.tile-top{display:flex;width:100%;justify-content:space-between;align-items:center;margin-bottom:6px;position:relative}
+.tile-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:21px;font-family:var(--fd);font-weight:700;background:color-mix(in srgb,var(--a1) 18%,var(--field));border:1px solid color-mix(in srgb,var(--a1) 36%,transparent);color:var(--headline)}
+.tile-go{font-size:19px;color:color-mix(in srgb,var(--a1) 88%,var(--mix));opacity:.55;transition:.22s}
+.tile:hover .tile-go{opacity:1;transform:translateX(4px)}
+.tile-name{position:relative;font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:-.022em;line-height:1.2}
+.tile-desc{position:relative;color:var(--muted);font-size:13px;line-height:1.5;flex:1}
+.tile-chip{position:relative;font-family:var(--fm);font-size:11px;padding:6px 10px;border-radius:9px;background:var(--chip);border:1px solid var(--border);color:color-mix(in srgb,var(--a1) 72%,var(--mix));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* ---------- animación de apertura ---------- */
+.splash{position:fixed;inset:0;z-index:100;display:none;place-items:center;pointer-events:none;background:radial-gradient(900px 640px at 50% 42%,color-mix(in srgb,var(--a1) 32%,transparent),transparent 68%),radial-gradient(700px 500px at 80% 90%,color-mix(in srgb,var(--a2) 22%,transparent),transparent 65%),var(--bg)}
+.splash.show{display:grid;pointer-events:auto;animation:spFade .2s ease}
+.splash.out{animation:spOut .26s ease forwards}
+.sp-inner{text-align:center;padding:24px}
+.sp-icon{font-size:54px;line-height:1;margin-bottom:16px;animation:spIcon .55s cubic-bezier(.2,.9,.25,1) backwards}
+.sp-name{font-family:var(--fd);font-weight:800;font-size:clamp(38px,8.5vw,84px);letter-spacing:-.05em;line-height:1;background:linear-gradient(100deg,var(--headline),color-mix(in srgb,var(--a1) 82%,var(--mix)) 52%,color-mix(in srgb,var(--a2) 82%,var(--mix)));-webkit-background-clip:text;background-clip:text;color:transparent;animation:spName .62s cubic-bezier(.16,.9,.24,1) backwards}
+.sp-tag{margin-top:13px;color:var(--muted);font-size:14px;animation:spName .62s .1s cubic-bezier(.16,.9,.24,1) backwards}
+.sp-line{height:3px;width:min(340px,58vw);margin:26px auto 0;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2));transform-origin:left;animation:spLine .72s .08s cubic-bezier(.2,.9,.25,1) backwards}
+.splash.brief .sp-name{font-size:clamp(26px,5.4vw,46px);animation-duration:.34s}
+.splash.brief .sp-icon{font-size:36px;margin-bottom:10px;animation-duration:.34s}
+.splash.brief .sp-tag{animation-duration:.34s;animation-delay:.05s}
+.splash.brief .sp-line{width:min(220px,44vw);margin-top:18px;animation-duration:.4s}
+@keyframes spFade{from{opacity:0}to{opacity:1}}
+@keyframes spOut{to{opacity:0;transform:scale(1.035)}}
+@keyframes spName{from{opacity:0;transform:translateY(26px);filter:blur(14px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes spIcon{from{opacity:0;transform:scale(.55) rotate(-10deg)}to{opacity:1;transform:none}}
+@keyframes spLine{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+
+/* ---------- paneles y formularios ---------- */
+.panel{background:linear-gradient(160deg,var(--panel1),var(--panel2));border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.panel h3{font-family:var(--fd);margin:0 0 6px;font-size:18px;letter-spacing:-.02em}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.formgrid.three{grid-template-columns:repeat(3,1fr)}
+label{display:grid;gap:7px;color:var(--muted);font-size:12.5px;font-weight:600;letter-spacing:.01em}
+input,select{width:100%;background:var(--field);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 13px;outline:none;transition:.18s}
+input:focus,select:focus{border-color:var(--a1);box-shadow:0 0 0 3px color-mix(in srgb,var(--a1) 16%,transparent)}
+input[type=number]{font-family:var(--fm)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.btn{border:1px solid var(--border);background:var(--soft2);color:var(--text);border-radius:12px;padding:11px 15px;font-weight:600;font-size:13.5px;transition:.18s}
+.btn:hover{border-color:var(--border2);background:var(--soft3)}
+.btn.primary{background:linear-gradient(135deg,var(--a1),var(--a2));border:0;color:var(--onaccent);font-weight:800;box-shadow:0 10px 28px color-mix(in srgb,var(--a1) 26%,transparent)}
+.btn.primary:hover{filter:brightness(1.09)}
+.btn.danger{color:var(--danger-text);border-color:rgba(239,68,68,.32);background:rgba(239,68,68,.09)}
+.btn.danger:hover{background:rgba(239,68,68,.16)}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.muted{color:var(--muted)}
+.help,.field-help{font-size:11.5px;color:var(--muted);line-height:1.45}
+.invalid{border-color:rgba(239,68,68,.75)!important;box-shadow:0 0 0 3px rgba(239,68,68,.09)!important}
+.valid{border-color:rgba(34,197,94,.45)!important}
+.stack{display:grid;gap:13px}
+.mini-note{padding:13px 15px;border:1px solid var(--border);border-left:3px solid color-mix(in srgb,var(--a1) 70%,transparent);border-radius:12px;background:var(--soft);color:var(--muted);font-size:12.5px;line-height:1.6}
+.mini-note b{color:var(--text)}
+.formula-chip{display:inline-flex;padding:6px 10px;border-radius:9px;background:var(--chip);border:1px solid var(--border);font-family:var(--fm);font-size:11.5px;color:color-mix(in srgb,var(--a1) 72%,var(--mix));margin:2px 3px 2px 0}
+.math-expression{font-family:var(--fm);font-size:15px}
+.scale-note{padding:12px 15px;border-radius:12px;background:color-mix(in srgb,var(--a2) 12%,transparent);border:1px solid color-mix(in srgb,var(--a2) 28%,transparent);font-size:12.5px;margin-bottom:16px}
+.resistor-list{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.resistor-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.resistor-row .btn{padding:12px 13px}
+
+/* ---------- teclado matemático ---------- */
+.mathkb{margin-top:20px;border:1px solid var(--border);border-radius:18px;background:var(--soft);overflow:hidden}
+.mathkb-head{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.mathkb-title{font-family:var(--fd);font-weight:700;font-size:13px;letter-spacing:-.01em}
+.mathkb-title:before{content:"\2328";margin-right:7px;opacity:.7}
+.mathkb-tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.kbtab{border:1px solid var(--border);background:var(--soft2);color:var(--muted);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:600;transition:.15s}
+.kbtab:hover{color:var(--text);border-color:var(--border2)}
+.kbtab.active{border-color:color-mix(in srgb,var(--a1) 55%,transparent);color:color-mix(in srgb,var(--a1) 88%,var(--mix));background:color-mix(in srgb,var(--a1) 14%,transparent)}
+.mathkb-body{padding:13px}
+.kbgrid{display:grid;gap:7px;grid-template-columns:repeat(var(--kbc,6),minmax(0,1fr))}
+.kbkey{border:1px solid var(--border);background:linear-gradient(180deg,var(--key1),var(--key2));color:var(--text);border-radius:12px;padding:12px 4px;min-height:46px;font-family:var(--fm);font-size:15px;font-weight:500;transition:.13s;user-select:none}
+.kbkey:hover{border-color:color-mix(in srgb,var(--a1) 55%,transparent);background:color-mix(in srgb,var(--a1) 15%,transparent)}
+.kbkey:active{transform:translateY(1px);background:color-mix(in srgb,var(--a1) 26%,transparent)}
+.kbkey.op{color:color-mix(in srgb,var(--a1) 88%,var(--mix))}
+.kbkey.fn{font-size:13px}
+.kbkey.act{font-family:var(--fu);font-size:13px;font-weight:700;background:color-mix(in srgb,var(--a1) 15%,transparent);border-color:color-mix(in srgb,var(--a1) 38%,transparent)}
+.kbnote{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.55}
+.kbnote b{color:var(--text);font-family:var(--fm);font-size:11px}
+
+/* ---------- cámara ---------- */
+.cam{margin-top:16px;border:1px solid var(--border);border-radius:18px;background:var(--soft);overflow:hidden}
+.cam-head{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.cam-title{font-family:var(--fd);font-weight:700;font-size:13px}
+.cam-title:before{content:"\1F4F7";margin-right:7px}
+.cam-tabs{display:flex;gap:8px;align-items:center;margin-left:auto}
+.cam-badge{font-family:var(--fm);font-size:11px;padding:3px 9px;border-radius:20px;background:color-mix(in srgb,var(--a1) 20%,transparent);color:color-mix(in srgb,var(--a1) 88%,var(--mix))}
+.cam-body{padding:14px}
+.cam-drop{display:grid;gap:12px;justify-items:center;text-align:center;padding:26px 16px;border:1px dashed var(--border2);border-radius:14px;color:var(--muted);font-size:13px;line-height:1.55}
+.cam-ico{font-size:34px}
+.cam-img{display:block;width:100%;max-height:230px;object-fit:contain;border-radius:14px;border:1px solid var(--border);background:var(--imgbg);cursor:zoom-in;transition:.25s}
+.cam-img.zoom{max-height:74vh;cursor:zoom-out}
+.cam-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.cam-msg{margin-top:11px;padding:10px 13px;border-radius:11px;background:color-mix(in srgb,var(--a1) 11%,transparent);border:1px solid color-mix(in srgb,var(--a1) 30%,transparent);font-size:12.5px;line-height:1.5}
+.cam-text{width:100%;background:var(--field);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:11px 13px;font-family:var(--fm);font-size:14px;resize:vertical;outline:none}
+.cam-text:focus{border-color:var(--a1);box-shadow:0 0 0 3px color-mix(in srgb,var(--a1) 16%,transparent)}
+.cam-note{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* ---------- resultados ---------- */
+.result{margin-top:17px;padding:19px;border-radius:17px;border:1px solid color-mix(in srgb,var(--a1) 34%,transparent);background:linear-gradient(150deg,color-mix(in srgb,var(--a1) 11%,transparent),var(--softest))}
+.result strong{display:block;font-family:var(--fm);font-size:22px;font-weight:600;letter-spacing:-.01em;color:var(--headline)}
+.result.error{border-color:rgba(239,68,68,.42);background:rgba(239,68,68,.09);color:var(--danger-text);font-size:14px}
+.steps{margin-top:11px;color:var(--muted);line-height:1.7;font-size:13px}
+.steps b{color:var(--headline)}
+.procedure{margin-top:15px;padding:17px;border-radius:15px;background:var(--deep);border:1px solid var(--border)}
+.procedure h4{margin:0 0 12px;font-family:var(--fd);font-size:14px;letter-spacing:-.01em}
+.procedure-step{display:grid;grid-template-columns:28px 1fr;gap:11px;padding:10px 0;border-top:1px solid var(--soft2);font-size:13px;line-height:1.6}
+.procedure-step b{font-family:var(--fd);font-weight:650;font-size:12.5px;letter-spacing:.01em}
+.stepnum{width:25px;height:25px;border-radius:9px;background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center;color:var(--onaccent);font-weight:900;font-size:11px;font-family:var(--fd)}
+.history{margin-top:18px}
+.history-head{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:12px;background:var(--soft);color:var(--muted);font-family:var(--fd);font-size:13px;font-weight:650;transition:.16s}
+.history-head:hover{color:var(--text);border-color:var(--border2)}
+.history-head.open{border-bottom-left-radius:0;border-bottom-right-radius:0;color:var(--text)}
+.hcount{min-width:22px;padding:2px 7px;border-radius:20px;background:color-mix(in srgb,var(--a1) 22%,transparent);color:color-mix(in srgb,var(--a1) 88%,var(--mix));font-family:var(--fm);font-size:11px}
+.harrow{margin-left:auto;transition:.2s}
+.history-head.open .harrow{transform:rotate(180deg)}
+.history-list{display:grid;gap:8px;padding:11px;border:1px solid var(--border);border-top:0;border-radius:0 0 12px 12px;background:var(--deep)}
+.history-item{display:flex;align-items:center;gap:9px;flex-wrap:wrap;width:100%;text-align:left;padding:11px 13px;background:var(--soft);border:1px solid var(--border);border-radius:11px;font-size:12px;font-family:var(--fm);color:var(--muted)}
+.history-item.clickable{cursor:pointer;transition:.15s}
+.history-item.clickable:hover{border-color:color-mix(in srgb,var(--a1) 55%,transparent);background:color-mix(in srgb,var(--a1) 10%,transparent);color:var(--text)}
+.hload{margin-left:auto;font-family:var(--fu);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;background:color-mix(in srgb,var(--a1) 18%,transparent);color:color-mix(in srgb,var(--a1) 90%,var(--mix))}
+.history-item b{color:var(--text);font-family:var(--fu)}
+.history-empty{color:var(--muted);font-size:12px}
+.fx-status{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:13px;font-size:12px;color:var(--muted)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 10px rgba(34,197,94,.5)}
+.status-dot.loading{background:#f59e0b;box-shadow:0 0 10px rgba(245,158,11,.4)}
+.status-dot.error{background:var(--danger);box-shadow:0 0 10px rgba(239,68,68,.4)}
+.api-credit{font-size:11px;color:var(--muted);margin-top:12px}
+.api-credit a{color:color-mix(in srgb,var(--a1) 85%,var(--mix))}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:13px}
+.tabs button{white-space:nowrap}
+.tabs button.active{border-color:var(--a1);color:color-mix(in srgb,var(--a1) 88%,var(--mix));background:color-mix(in srgb,var(--a1) 12%,transparent)}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{text-align:left;padding:11px;border-bottom:1px solid var(--border);font-size:13px}
+.table th{color:var(--muted);font-weight:600;font-size:12px}
+.table td{font-family:var(--fm);font-size:12.5px}
+.subject-row,.entry{display:grid;grid-template-columns:1.1fr .8fr .8fr auto;gap:10px;align-items:end;padding:13px 0;border-bottom:1px solid var(--border)}
+.metric{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.metric .box{padding:17px;background:var(--soft);border:1px solid var(--border);border-radius:15px}
+.metric .box span{font-size:12px}
+.metric b{font-family:var(--fm);font-size:25px;display:block;margin-top:6px;letter-spacing:-.02em}
+.chartwrap{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
+.donut{width:190px;height:190px;border-radius:50%;background:conic-gradient(var(--a1) 0 55%,var(--a2) 55% 100%);position:relative;box-shadow:0 0 50px color-mix(in srgb,var(--a1) 16%,transparent)}
+.donut:after{content:"";position:absolute;inset:38px;background:var(--field);border-radius:50%}
+.legend{display:grid;gap:11px;color:var(--muted);font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--a1);margin-right:8px}
+.dot.v{background:var(--a2)}
+.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:14px;font-size:13.5px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--surface2);border:1px solid var(--border2);padding:13px 16px;border-radius:12px;box-shadow:var(--shadow);transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s;z-index:120;font-size:13px}
+.toast.show{transform:none;opacity:1}
+.footer{color:var(--muted);text-align:center;font-size:11.5px;padding:30px}
+.soon-wrap{display:grid;place-items:center;text-align:center;min-height:56vh;position:relative;overflow:hidden}
+.soon-badge{width:170px;height:170px;margin:0 auto 26px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--a1) 10%,transparent);border:1px solid color-mix(in srgb,var(--a1) 32%,transparent);box-shadow:0 0 60px color-mix(in srgb,var(--a1) 18%,transparent);font-size:72px}
+.soon-title{font-family:var(--fd);font-size:clamp(38px,7.5vw,72px);font-weight:900;letter-spacing:-.05em;background:linear-gradient(100deg,var(--headline),color-mix(in srgb,var(--a1) 85%,var(--mix)));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media(max-width:900px){.hub>.tile{grid-column:span 3!important}.quick{display:none}.brand{min-width:auto}.hub{--cols:2!important}.formgrid,.formgrid.three{grid-template-columns:1fr}.metric{grid-template-columns:1fr}.subject-row,.entry{grid-template-columns:1fr 1fr}.subject-row .remove,.entry .remove{grid-column:2}.header{padding:11px 15px}.crumbs{margin-left:0;width:100%;order:3}}
+@media(max-width:600px){.kbgrid{gap:6px}.kbkey{min-height:44px;padding:11px 2px;font-size:14px;border-radius:10px}.kbkey.fn{font-size:12px}.hub>.tile{grid-column:span 6!important}.brand small{display:none}.brand{font-size:14px;gap:9px}.logo{width:34px;height:34px;border-radius:11px;font-size:12px}.sync{display:none}#googleBtn{white-space:nowrap;font-size:12px;padding:9px 12px}.header{gap:10px}main{padding:20px 14px 60px}.hub{--cols:1!important;grid-auto-rows:minmax(150px,auto);min-height:0}.panel{padding:16px}.sh-icon{width:48px;height:48px;font-size:21px}.resistor-list{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* ---------- tema claro ---------- */
+[data-theme="light"]{
+ --bg:#f4f5fa;
+ --surface:rgba(15,20,40,.04);
+ --surface2:#ffffff;
+ --border:rgba(15,20,40,.13);
+ --border2:rgba(15,20,40,.26);
+ --text:#161823;
+ --muted:#5a6072;
+ --headline:#0d0f16;
+ --mix:#0b0d14;
+ --field:#ffffff;
+ --tile1:#ffffff;--tile2:#f6f7fc;
+ --softest:rgba(15,20,40,.02);
+ --soft:rgba(15,20,40,.038);
+ --soft2:rgba(15,20,40,.06);
+ --soft3:rgba(15,20,40,.1);
+ --deep:rgba(15,20,40,.045);
+ --headerbg:rgba(244,245,250,.82);
+ --chip:rgba(15,20,40,.05);
+ --key1:#ffffff;--key2:rgba(15,20,40,.03);
+ --panel1:rgba(255,255,255,.92);--panel2:rgba(255,255,255,.62);
+ --imgbg:#e8eaf2;
+ --danger-text:#b42318;
+ --shadow:0 16px 42px rgba(20,26,50,.10);
+ --shadow2:rgba(20,26,50,.14);
+}
+[data-theme="light"] body:before{background:
+ radial-gradient(900px 620px at 10% -8%,color-mix(in srgb,var(--a1) 13%,transparent),transparent 62%),
+ radial-gradient(820px 520px at 96% 2%,color-mix(in srgb,var(--a2) 11%,transparent),transparent 58%),
+ radial-gradient(700px 520px at 50% 112%,color-mix(in srgb,var(--a1) 7%,transparent),transparent 60%)}
+[data-theme="light"] .tile{box-shadow:0 2px 10px rgba(20,26,50,.05)}
+[data-theme="light"] .kbkey{background:linear-gradient(180deg,#fff,rgba(15,20,40,.035))}
+[data-theme="light"] .history-item,[data-theme="light"] .metric .box{background:#fff}
+
+/* ---------- configuración ---------- */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:12px;margin-top:16px}
+.theme-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:17px;border-radius:16px;border:1px solid var(--border);background:var(--soft);color:var(--text);transition:.18s}
+.theme-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.theme-card.active{border-color:color-mix(in srgb,var(--a1) 60%,transparent);background:color-mix(in srgb,var(--a1) 12%,transparent)}
+.theme-ico{font-size:26px;line-height:1}
+.theme-name{font-family:var(--fd);font-weight:700;font-size:15px;letter-spacing:-.01em}
+.theme-desc{color:var(--muted);font-size:12.5px;line-height:1.5;flex:1}
+.theme-mark{margin-top:9px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--soft2);color:var(--muted)}
+.theme-card.active .theme-mark{background:color-mix(in srgb,var(--a1) 22%,transparent);color:color-mix(in srgb,var(--a1) 88%,var(--mix))}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+  <div class="brand"><div class="logo">OC</div><div>OmniCalc Studio<small>Study &bull; Life &bull; Calculate</small></div></div>
+  <nav class="quick" id="quick"></nav>
+  <div class="account"><span class="sync" id="syncStatus">Local</span><button class="btn" id="googleBtn">Continuar con Google</button></div>
+</header>
+
+<main>
+<div class="navbar" id="navbar" style="display:none">
+  <button class="navbtn" onclick="navBack()">&larr; Atr&aacute;s</button>
+  <button class="navbtn" onclick="navHome()">&#8962; Men&uacute;</button>
+  <div class="crumbs" id="crumbs"></div>
+</div>
+<div class="screenhead" id="screenhead" style="display:none"></div>
+
+<section id="v-dashboard" class="screen">
+  <div class="hero">
+    <div class="eyebrow">Workspace inteligente</div>
+    <h1>Todo lo que necesitas para calcular.</h1>
+    <p>Herramientas acad&eacute;micas y cotidianas reunidas en un solo espacio, con una interfaz limpia y pensada para estudiar durante horas.</p>
+  </div>
+  <div class="hub" id="dashGrid"></div>
+</section>
+
+<section id="v-math-hub" class="screen"><div class="hub" id="mathHub"></div></section>
+<section id="v-math-panel" class="screen"><div class="panel"><div id="mathForm"></div></div></section>
+
+<section id="v-physics-hub" class="screen"><div class="hub" id="physicsHub"></div></section>
+<section id="v-physics-sub" class="screen"><div class="hub" id="physicsSubHub"></div></section>
+<section id="v-physics-panel" class="screen"><div class="panel"><div id="physicsForm"></div></div></section>
+
+<section id="v-chemistry" class="screen">
+  <div class="panel soon-wrap">
+    <div>
+      <div class="soon-badge">&#129514;</div>
+      <div class="soon-title">PR&Oacute;XIMAMENTE</div>
+      <p style="font-size:15px;line-height:1.7;color:var(--muted);margin:18px auto 0;max-width:600px">Estamos preparando el m&oacute;dulo de Qu&iacute;mica. Las herramientas anteriores han sido retiradas temporalmente para dar paso a una nueva experiencia.</p>
+    </div>
+  </div>
+</section>
+
+<section id="v-grades-hub" class="screen"><div class="hub" id="gradesHub"></div></section>
+<section id="v-grades-subjects" class="screen">
+  <div class="panel">
+    <div class="scale-note"><b>Escala colombiana:</b> 1.0 m&iacute;nimo &middot; <b>3.5 aprobaci&oacute;n</b> &middot; 5.0 m&aacute;ximo.</div>
+    <div class="actions" style="margin-top:0"><button class="btn primary" onclick="addSubject()">+ Agregar Materia</button><button class="btn" onclick="calculateGrades()">Calcular rendimiento</button><button class="btn danger" onclick="clearGrades()">Eliminar datos</button></div>
+    <div id="subjects"></div>
+    <div id="gradeResult"></div><div id="gradesHistory"></div>
+  </div>
+</section>
+<section id="v-grades-goal" class="screen">
+  <div class="panel">
+    <p class="muted" style="margin:0 0 16px;font-size:13.5px;line-height:1.6">Calcula qu&eacute; nota necesitas en el porcentaje restante para alcanzar una meta final. Escala: 1.0&ndash;5.0; aprobaci&oacute;n: 3.5.</p>
+    <div class="formgrid three">
+      <label>Nota acumulada<input id="gCurrent" type="number" step=".01" min="0" max="100" placeholder="Ej. 3.2"></label>
+      <label>Porcentaje ya cursado<input id="gWeight" type="number" step=".01" min="0" max="100" placeholder="Ej. 70"></label>
+      <label>Meta final<input id="gTarget" type="number" step=".01" min="0" max="5" value="3.5" placeholder="Ej. 3.5"></label>
+    </div>
+    <div class="actions"><button class="btn primary" onclick="simulateGrade()">Calcular nota requerida</button></div><div id="gradeSim"></div><div id="goalHistory"></div>
+  </div>
+</section>
+
+<section id="v-budget" class="screen">
+  <div class="panel">
+    <div class="formgrid three">
+      <label>Tipo<select id="bType"><option value="income">Ingreso</option><option value="expense">Gasto</option></select></label>
+      <label>Monto<input id="bAmount" type="number" min="0" step=".01" placeholder="0.00"></label>
+      <label>Categor&iacute;a<input id="bCategory" placeholder="Comida, transporte..."></label>
+    </div>
+    <label style="margin-top:15px">Descripci&oacute;n<input id="bDesc" placeholder="Descripci&oacute;n opcional"></label>
+    <div class="actions"><button class="btn primary" onclick="addBudgetEntry()">Registrar</button><button class="btn danger" onclick="clearBudget()">Limpiar datos</button></div>
+  </div>
+  <div class="panel"><div id="budgetMetrics" class="metric"></div></div>
+  <div class="panel"><div class="chartwrap"><div id="budgetDonut" class="donut"></div><div class="legend" id="budgetLegend"></div></div></div>
+  <div class="panel"><div id="budgetList"></div></div>
+</section>
+
+<section id="v-settings" class="screen"><div id="settingsBody"></div></section>
+
+<section id="v-utilities-hub" class="screen"><div class="hub" id="utilHub"></div></section>
+<section id="v-utilities-units" class="screen">
+  <div class="panel"><div class="tabs" id="unitTabs"></div><div id="unitForm"></div></div>
+</section>
+<section id="v-utilities-fx" class="screen">
+  <div class="panel">
+    <p class="muted" style="margin:0 0 16px;font-size:13.5px;line-height:1.6">Tasas obtenidas bajo demanda desde ExchangeRate-API Open Access. Se muestran USD, EUR y COP junto a las dem&aacute;s monedas disponibles, con la fecha y hora de la &uacute;ltima actualizaci&oacute;n publicada.</p>
+    <div class="formgrid three">
+      <label>Cantidad<input id="fxAmount" type="number" value="1" step=".01"></label>
+      <label>De<select id="fxFrom"></select></label>
+      <label>A<select id="fxTo"></select></label>
+    </div>
+    <div class="actions"><button class="btn primary" onclick="convertFX()">Convertir</button></div>
+    <div class="fx-status" id="fxStatus"><span class="status-dot loading"></span><span>Cargando monedas disponibles&hellip;</span></div>
+    <div id="fxResult"></div><div id="fxHistory"></div>
+    <div class="api-credit">Tasas proporcionadas por <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>.</div>
+  </div>
+</section>
+</main>
+<div class="footer">OmniCalc Studio &bull; datos guardados localmente en este navegador</div>
+<div id="toast" class="toast"></div>
+<div id="splash" class="splash"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const state={subjects:JSON.parse(localStorage.getItem('oc_subjects')||'[]'), budget:JSON.parse(localStorage.getItem('oc_budget')||'[]')};
+const sessionHistory=JSON.parse(sessionStorage.getItem('oc_history')||'{}');
+function saveHistory(){sessionStorage.setItem('oc_history',JSON.stringify(sessionHistory))}
+function addHistory(tool,item){sessionHistory[tool]=sessionHistory[tool]||[];sessionHistory[tool].unshift({time:new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),...item});sessionHistory[tool]=sessionHistory[tool].slice(0,8);saveHistory();renderHistory(tool)}
+const historyOpen={};
+function toggleHistory(tool){historyOpen[tool]=!historyOpen[tool];renderHistory(tool)}
+function renderHistory(tool){
+ const el=document.getElementById(tool+'History');if(!el)return;
+ const a=sessionHistory[tool]||[],open=!!historyOpen[tool];
+ let body='';
+ if(open){
+  body='<div class="history-list">'+(a.length?a.map((x,i)=>{
+   const can=!!x.restore;
+   const txt=`<b>${esc(x.label||'C\u00e1lculo')}</b> \u00b7 ${esc(x.value||'')} <span class="muted">\u00b7 ${esc(x.time)}</span>`;
+   return can
+    ? `<button type="button" class="history-item clickable" onclick="restoreHistory('${tool}',${i})">${txt}<span class="hload">Usar</span></button>`
+    : `<div class="history-item">${txt}</div>`;
+  }).join(''):'<div class="history-empty">Aqu\u00ed aparecer\u00e1n tus c\u00e1lculos recientes durante esta sesi\u00f3n.</div>')+'</div>';
+ }
+ el.innerHTML=`<div class="history"><button type="button" class="history-head${open?' open':''}" onclick="toggleHistory('${tool}')"><span>Historial de sesi\u00f3n</span><span class="hcount">${a.length}</span><span class="harrow">\u25be</span></button>${body}</div>`;
+}
+function restoreHistory(tool,i){
+ const h=(sessionHistory[tool]||[])[i];
+ if(!h||!h.restore)return toast('Esa entrada es de una sesi\u00f3n anterior y no guard\u00f3 los datos.');
+ const r=h.restore;
+ const fill=()=>{
+  try{
+   if(r.unitType&&typeof selectUnit==='function')selectUnit(r.unitType);
+   if(r.resistors){window.circuitResistors=r.resistors.slice();if(typeof renderResistors==='function')renderResistors()}
+   Object.keys(r.fields||{}).forEach(k=>{const el=document.getElementById(k);if(el)el.value=r.fields[k]});
+   toast('Datos cargados arriba. Pulsa calcular cuando quieras.');
+  }catch(_){toast('No se pudieron cargar esos datos.')}
+ };
+ if(r.route&&typeof navGo==='function'&&r.route.join('/')!==route.join('/')){navGo(r.route,false);setTimeout(fill,40)}
+ else fill();
+}
+function validateNumberInput(i,min,max){const v=parseFloat(i.value),ok=Number.isFinite(v)&&(min===undefined||v>=min)&&(max===undefined||v<=max);i.classList.toggle('invalid',!ok);i.classList.toggle('valid',ok);return ok}
+
+function save(){localStorage.setItem('oc_subjects',JSON.stringify(state.subjects));localStorage.setItem('oc_budget',JSON.stringify(state.budget));$('syncStatus').textContent='Guardado localmente';}
+function toast(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+
+function inputField(id,label,opts={}){
+ const type=opts.type||'number';const step=opts.step||'any';const placeholder=opts.placeholder||'';const min=opts.min!==undefined?` min="${opts.min}"`:'';const max=opts.max!==undefined?` max="${opts.max}"`:'';
+ return `<label>${label}<input id="${id}" type="${type}" step="${step}"${min}${max} placeholder="${placeholder}"${opts.extra||''}><span class="field-help">${opts.help||''}</span></label>`;
+}
+
+/* ===================== TEMA CLARO / OSCURO ===================== */
+const THEMES=[
+ {id:'dark',n:'Modo oscuro',ico:'🌙',d:'El aspecto original, cómodo para estudiar de noche o con poca luz.'},
+ {id:'light',n:'Modo claro',ico:'☀️',d:'Fondo claro y alto contraste, mejor a plena luz del día.'},
+ {id:'auto',n:'Según el sistema',ico:'🖥️',d:'Sigue el ajuste de tu teléfono o computador y cambia solo.'}
+];
+let themePref=(function(){try{return localStorage.getItem('oc_theme')||'dark'}catch(_){return 'dark'}})();
+function systemTheme(){try{return window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}catch(_){return 'dark'}}
+function effectiveTheme(){return themePref==='auto'?systemTheme():themePref}
+function applyTheme(){
+ const eff=effectiveTheme();
+ document.documentElement.setAttribute('data-theme',eff);
+ document.documentElement.style.colorScheme=eff;
+}
+function setTheme(t){
+ themePref=t;
+ try{localStorage.setItem('oc_theme',t)}catch(_){}
+ applyTheme();renderSettings();
+ const eff=effectiveTheme();
+ toast(t==='auto'?('Ahora sigue al sistema: '+(eff==='light'?'modo claro':'modo oscuro')):('Activado el '+(t==='light'?'modo claro':'modo oscuro')+'.'));
+}
+function renderSettings(){
+ const el=$('settingsBody');if(!el)return;
+ const eff=effectiveTheme();
+ el.innerHTML='<div class="panel"><h3>Apariencia</h3>'+
+  '<p class="muted" style="margin:6px 0 0;font-size:13.5px;line-height:1.6">Elige cómo se ve OmniCalc Studio. El cambio se aplica al instante en todas las herramientas y se recuerda en este navegador.</p>'+
+  '<div class="theme-grid">'+THEMES.map(t=>`<button type="button" class="theme-card${themePref===t.id?' active':''}" onclick="setTheme('${t.id}')"><span class="theme-ico">${t.ico}</span><span class="theme-name">${esc(t.n)}</span><span class="theme-desc">${esc(t.d)}</span><span class="theme-mark">${themePref===t.id?'✓ En uso':'Elegir'}</span></button>`).join('')+'</div>'+
+  `<div class="mini-note" style="margin-top:16px">Ahora mismo la app se ve en <b>modo ${eff==='light'?'claro':'oscuro'}</b>${themePref==='auto'?' porque tu sistema está en ese ajuste':''}. Los colores de cada herramienta (rojo en Matemáticas, violeta en Física, y así) se mantienen en ambos modos.</div>`+
+  '</div>';
+}
+try{
+ const mq=window.matchMedia('(prefers-color-scheme: light)');
+ const onSys=()=>{if(themePref==='auto'){applyTheme();renderSettings()}};
+ mq.addEventListener?mq.addEventListener('change',onSys):mq.addListener(onSys);
+}catch(_){}
+
+/* ===================== NAVEGACIÓN, COLORES Y ANIMACIÓN ===================== */
+const ACCENTS={
+ math:['#ef4444','#f97316'],
+ physics:['#8b5cf6','#6366f1'],
+ chemistry:['#15803d','#2fa06b'],
+ grades:['#f59e0b','#fbbf24'],
+ budget:['#34c77b','#16a34a'],
+ utilities:['#22d3ee','#3b82f6'],
+ settings:['#7c8ba1','#94a3b8']
+};
+const DEFAULT_ACCENT=['#00b4d8','#7c3aed'];
+const TOOLS={
+ math:{n:'Matemáticas',icon:'∑',tag:'Operaciones, funciones, derivadas y límites',
+  sections:[
+   {id:'pct',n:'Porcentaje',icon:'%',d:'El porcentaje de una cantidad, paso a paso.',f:'% = valor × p ÷ 100'},
+   {id:'pow',n:'Potencia',icon:'xⁿ',d:'Eleva una base a cualquier exponente.',f:'r = base^exp'},
+   {id:'root',n:'Raíz cuadrada',icon:'√',d:'Raíz cuadrada de un número positivo.',f:'r = √n'},
+   {id:'eq',n:'Ecuación lineal',icon:'≡',d:'Despeja x en una ecuación de primer grado.',f:'ax + b = 0'},
+   {id:'derivative',n:'Derivadas',icon:'ƒ′',d:'Deriva f(x) de forma simbólica y evalúala en un punto.',f:"f'(x) = d/dx f(x)"},
+   {id:'limit',n:'Límites',icon:'lím',d:'Límite de f(x) cuando x tiende a un valor.',f:'lím x→a f(x)'}
+  ]},
+ physics:{n:'Física',icon:'⚛',tag:'Cinemática, dinámica y circuitos eléctricos',
+  sections:[
+   {id:'kinematics',n:'Cinemática',icon:'🏃',d:'MRU y MRUV: velocidad, distancia, tiempo y aceleración.',f:'v = d ÷ t'},
+   {id:'dynamics',n:'Dinámica',icon:'⚖',d:'Leyes de Newton: fuerza, masa, aceleración y peso.',f:'F = m·a'},
+   {id:'circuits',n:'Circuitos eléctricos',icon:'⚡',d:'Serie, paralelo, Ley de Ohm y leyes de Kirchhoff.',f:'V = I·R'}
+  ]},
+ chemistry:{n:'Química',icon:'🧪',tag:'Módulo en desarrollo',sections:[]},
+ grades:{n:'Rendimiento',icon:'🎓',tag:'Materias, ponderaciones y metas de aprobación',
+  sections:[
+   {id:'subjects',n:'Materias y promedio',icon:'📚',d:'Registra materias, cortes y ponderaciones y obtén el promedio.',f:'aprobación 3.5'},
+   {id:'goal',n:'Simulación de meta',icon:'🎯',d:'Calcula qué nota necesitas en el porcentaje que te queda.',f:'meta ≤ 5.0'}
+  ]},
+ budget:{n:'Presupuesto',icon:'💰',tag:'Ingresos, gastos y disponibilidad mensual',sections:[]},
+ utilities:{n:'Utilidades',icon:'⇄',tag:'Conversión de unidades y de divisas',
+  sections:[
+   {id:'units',n:'Unidades',icon:'📐',d:'Longitud, peso, volumen, velocidad y temperatura.',f:'km → m'},
+   {id:'fx',n:'Divisas',icon:'💱',d:'Conversión con la tasa más reciente publicada.',f:'COP → USD'}
+  ]},
+ settings:{n:'Configuración',icon:'⚙',tag:'Apariencia y preferencias de la app',sections:[]}
+};
+const PHY_META={
+ mruV:['🚗','Velocidad constante a partir de la distancia y el tiempo.'],
+ mruD:['📏','Distancia recorrida con velocidad constante.'],
+ mruT:['⏱','Tiempo empleado a velocidad constante.'],
+ mruvA:['📈','Aceleración a partir del cambio de velocidad.'],
+ mruvV:['🚀','Velocidad final con aceleración constante.'],
+ mruvD:['🛣','Distancia recorrida con aceleración constante.'],
+ force:['💪','Segunda ley de Newton: la fuerza resultante.'],
+ mass:['⚖','Masa despejada de la fuerza y la aceleración.'],
+ accel:['📈','Aceleración despejada de la fuerza y la masa.'],
+ weight:['🪙','Peso a partir de la masa y la gravedad.'],
+ series:['🔗','Resistencia equivalente, corriente y caídas en serie.'],
+ parallel:['🔀','Resistencia equivalente y corriente por cada rama.'],
+ ohm:['Ω','Despeja V, I o R dejando vacía la incógnita.'],
+ kirchhoffLoop:['🔁','Ley de voltajes: ΣV = 0 en una malla cerrada.'],
+ kirchhoffNode:['🔵','Ley de corrientes: lo que entra al nodo sale del nodo.']
+};
+const selected={math:'pct',physics:'kinematics'};
+let route=[];
+const REDUCED=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function applyAccent(tool){
+ const a=ACCENTS[tool]||DEFAULT_ACCENT;
+ document.documentElement.style.setProperty('--a1',a[0]);
+ document.documentElement.style.setProperty('--a2',a[1]);
+}
+function validRoute(r){
+ if(!Array.isArray(r)||!r.length)return true;
+ const t=TOOLS[r[0]];if(!t)return false;
+ if(r.length===1)return true;
+ if(r[0]==='physics'){
+  if(!physicsDefs[r[1]])return false;
+  if(r.length===2)return true;
+  return r.length===3&&physicsDefs[r[1]].tools.some(x=>x.id===r[2]);
+ }
+ return r.length===2&&t.sections.some(s=>s.id===r[1]);
+}
+function nodeMeta(r){
+ if(!r.length)return {n:'OmniCalc Studio',icon:'OC',tag:'Elige una herramienta'};
+ const t=TOOLS[r[0]];
+ if(r.length===1)return {n:t.n,icon:t.icon,tag:t.tag};
+ if(r[0]==='physics'){
+  const cat=t.sections.find(s=>s.id===r[1]);
+  if(r.length===2)return {n:cat.n,icon:cat.icon,tag:cat.d};
+  const tool=physicsDefs[r[1]].tools.find(x=>x.id===r[2]);
+  const m=PHY_META[tool.id]||['•',''];
+  return {n:tool.n,icon:m[0],tag:m[1]};
+ }
+ const s=t.sections.find(x=>x.id===r[1]);
+ return {n:s.n,icon:s.icon,tag:s.d};
+}
+function screenFor(r){
+ if(!r.length)return 'v-dashboard';
+ const k=r[0];
+ if(k==='math')return r.length===1?'v-math-hub':'v-math-panel';
+ if(k==='physics')return r.length===1?'v-physics-hub':(r.length===2?'v-physics-sub':'v-physics-panel');
+ if(k==='chemistry')return 'v-chemistry';
+ if(k==='settings')return 'v-settings';
+ if(k==='budget')return 'v-budget';
+ if(k==='grades')return r.length===1?'v-grades-hub':'v-grades-'+r[1];
+ if(k==='utilities')return r.length===1?'v-utilities-hub':'v-utilities-'+r[1];
+ return 'v-dashboard';
+}
+function routeCall(r){return 'navGo(['+r.map(x=>"'"+x+"'").join(',')+"]"}
+function hubLayout(n){
+ const preset={1:[1],2:[2],3:[3],4:[2,2],5:[3,2],6:[3,3],7:[3,2,2],8:[3,3,2]}[n];
+ let plan=preset;
+ if(!plan){plan=[];let left=n;while(left>0){const k=Math.min(3,left);plan.push(k);left-=k}}
+ const spans=[];plan.forEach(k=>{for(let i=0;i<k;i++)spans.push(6/k)});
+ return spans;
+}
+function tileHTML(item,i,span){
+ return `<button class="tile" style="grid-column:span ${span||2};animation-delay:${i*55}ms" onclick="${routeCall(item.go)},'brief')">`+
+  `<span class="tile-ghost">${item.icon}</span>`+
+  `<span class="tile-top"><span class="tile-icon">${item.icon}</span><span class="tile-go">→</span></span>`+
+  `<span class="tile-name">${esc(item.n)}</span>`+
+  `<span class="tile-desc">${esc(item.d||'')}</span>`+
+  (item.f?`<span class="tile-chip">${esc(item.f)}</span>`:'')+
+ `</button>`;
+}
+function renderHub(id,items){
+ const el=$(id);if(!el)return;
+ const spans=hubLayout(items.length);
+ el.style.setProperty('--cols',6);
+ el.innerHTML=items.map((it,i)=>tileHTML(it,i,spans[i])).join('');
+}
+function renderDashboard(){
+ const order=['math','physics','chemistry','grades','budget','utilities','settings'];
+ const spans=hubLayout(order.length);
+ $('dashGrid').style.setProperty('--cols',6);
+ $('dashGrid').innerHTML=order.map((k,i)=>{
+  const t=TOOLS[k],a=ACCENTS[k];
+  return `<button class="tile" style="--a1:${a[0]};--a2:${a[1]};grid-column:span ${spans[i]};animation-delay:${i*55}ms" onclick="navGo(['${k}'],'full')">`+
+   `<span class="tile-ghost">${t.icon}</span><span class="tile-top"><span class="tile-icon">${t.icon}</span><span class="tile-go">→</span></span>`+
+   `<span class="tile-name">${esc(t.n)}</span><span class="tile-desc">${esc(t.tag)}</span>`+
+   `<span class="tile-chip">Abrir herramienta</span></button>`;
+ }).join('');
+}
+function prepare(r){
+ if(!r.length){renderDashboard();return}
+ const k=r[0];
+ if(k==='math'){
+  if(r.length===1)renderHub('mathHub',TOOLS.math.sections.map(s=>Object.assign({},s,{go:['math',s.id]})));
+  else{selected.math=r[1];renderMathTool()}
+ }else if(k==='physics'){
+  if(r.length===1)renderHub('physicsHub',TOOLS.physics.sections.map(s=>Object.assign({},s,{go:['physics',s.id]})));
+  else if(r.length===2){
+   renderHub('physicsSubHub',physicsDefs[r[1]].tools.map(t=>{
+    const m=PHY_META[t.id]||['•',''];
+    return {n:t.n,icon:m[0],d:m[1],f:t.f||'',go:['physics',r[1],t.id]};
+   }));
+  }else{
+   selected.physics=r[1];
+   selectedPhysics[r[1]]=physicsDefs[r[1]].tools.findIndex(x=>x.id===r[2]);
+   renderPhysicsPanel();
+  }
+ }else if(k==='settings'){
+  renderSettings();
+ }else if(k==='grades'&&r.length===1){
+  renderHub('gradesHub',TOOLS.grades.sections.map(s=>Object.assign({},s,{go:['grades',s.id]})));
+ }else if(k==='utilities'&&r.length===1){
+  renderHub('utilHub',TOOLS.utilities.sections.map(s=>Object.assign({},s,{go:['utilities',s.id]})));
+ }
+}
+function showScreen(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+ const el=$(id);if(el)el.classList.add('active');
+ window.scrollTo({top:0,behavior:'auto'});
+}
+function renderChrome(){
+ const nb=$('navbar'),sh=$('screenhead');
+ if(!route.length){nb.style.display='none';sh.style.display='none';return}
+ nb.style.display='flex';sh.style.display='flex';
+ const parts=[`<button class="crumb" onclick="navHome()">Inicio</button>`];
+ for(let i=0;i<route.length;i++){
+  const m=nodeMeta(route.slice(0,i+1));
+  parts.push('<span class="sep">›</span>');
+  parts.push(i===route.length-1
+   ?`<span class="crumb current">${esc(m.n)}</span>`
+   :`<button class="crumb" onclick="${routeCall(route.slice(0,i+1))},false)">${esc(m.n)}</button>`);
+ }
+ $('crumbs').innerHTML=parts.join('');
+ const m=nodeMeta(route);
+ sh.innerHTML=`<span class="sh-icon">${m.icon}</span><span><span class="sh-title">${esc(m.n)}</span><span class="sh-tag">${esc(m.tag||'')}</span></span>`;
+}
+function playSplash(meta,kind,done){
+ const el=$('splash');let fired=false;
+ el.innerHTML=`<div class="sp-inner"><div class="sp-icon">${meta.icon}</div><div class="sp-name">${esc(meta.n)}</div><div class="sp-tag">${esc(meta.tag||'')}</div><div class="sp-line"></div></div>`;
+ el.className='splash show '+kind;
+ const end=()=>{
+  if(fired)return;fired=true;
+  clearTimeout(timer);
+  done();
+  el.classList.add('out');
+  setTimeout(()=>{el.className='splash';el.innerHTML='';el.onclick=null},280);
+ };
+ const timer=setTimeout(end,kind==='full'?900:440);
+ el.onclick=end;
+}
+function hashRoute(){
+ const h=decodeURIComponent((location.hash||'').slice(1));
+ const r=h?h.split('/').filter(Boolean):[];
+ return validRoute(r)?r:[];
+}
+function navGo(r,anim,fromHistory){
+ if(!validRoute(r))r=[];
+ applyAccent(r.length?r[0]:null);
+ const apply=()=>{
+  route=r.slice();
+  prepare(route);
+  showScreen(screenFor(route));
+  renderChrome();
+  const h='#'+route.join('/');
+  try{fromHistory?history.replaceState({route:route},'',h):history.pushState({route:route},'',h)}catch(_){}
+ };
+ if(anim&&r.length&&!REDUCED)playSplash(nodeMeta(r),anim==='full'?'full':'brief',apply);
+ else apply();
+}
+function navBack(){navGo(route.slice(0,-1),false)}
+function navHome(){navGo([],false)}
+function openView(id){navGo([id],'full')}
+function initApp(){
+ $('quick').innerHTML=Object.keys(TOOLS).map(k=>`<button onclick="navGo(['${k}'],'full')">${esc(TOOLS[k].n)}</button>`).join('');
+ $('googleBtn').onclick=()=>{toast('OAuth de Google listo para conectar: añade tus credenciales en producción.');$('syncStatus').textContent='Cuenta pendiente'};
+ applyTheme();renderSettings();
+ renderDashboard();
+ ['grades','goal'].forEach(renderHistory);
+ window.addEventListener('popstate',e=>{
+  const r=(e.state&&e.state.route)||hashRoute();
+  navGo(validRoute(r)?r:[],false,true);
+ });
+ window.addEventListener('hashchange',()=>{
+  const r=hashRoute();
+  if(r.join('/')!==route.join('/'))navGo(r,false,true);
+ });
+ navGo(hashRoute(),false,true);
+}
+
+/* ===================== MATEMÁTICAS ===================== */
+function renderMathTool(){
+ const box=$('mathForm');
+ if(['pct','pow','root','eq'].includes(selected.math))return renderBasicForm(selected.math);
+ if(selected.math==='derivative'){
+  box.innerHTML=`<div class="stack"><div class="mini-note">Escribe una función de una sola variable usando <b>x</b>. Ejemplos: <span class="formula-chip">x^3 - 4x + 2</span> <span class="formula-chip">sin(x)^2 + x/3</span> <span class="formula-chip">exp(x)*ln(x)</span><br>Puedes usar multiplicación implícita (<b>2x</b>, <b>3sen(x)</b>), potencias con <b>^</b> y las funciones sen, cos, tan, sec, csc, cot, asen, acos, atan, senh, cosh, tanh, sqrt, cbrt, exp, ln, log10, abs. Constantes: <b>pi</b> y <b>e</b>. Las funciones trigonométricas trabajan en <b>radianes</b>; para grados escribe el símbolo °, por ejemplo <span class="formula-chip">sen(30°)</span>. Usa el teclado de abajo si prefieres no escribir.</div><div class="formgrid"><label>Función f(x)<input id="derivExpr" type="text" data-mk="1" autocomplete="off" spellcheck="false" class="math-expression" placeholder="Ej. x^3 - 4x + 2"><span class="field-help">Se deriva de forma simbólica dentro del navegador, sin conexión externa.</span></label><label>Evaluar en x = (opcional)<input id="derivPoint" type="text" data-mk="1" autocomplete="off" spellcheck="false" class="math-expression" placeholder="Ej. 2 o pi/4"><span class="field-help">Admite expresiones como pi/4. Déjalo vacío para ver solo la derivada simbólica.</span></label></div><div class="actions"><button class="btn primary" onclick="solveDerivative()">Derivar</button></div><div id="mathResult"></div><div id="mathHistory"></div></div>`;
+  box.onkeydown=e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();solveDerivative()}};
+  renderHistory('math');attachMathKeyboard();
+ }else{
+  box.innerHTML=`<div class="stack"><div class="mini-note">Calcula <b>lím x → a f(x)</b>. Ejemplos: <span class="formula-chip">(x^2-1)/(x-1)</span> con a = 1, <span class="formula-chip">sen(x)/x</span> con a = 0, <span class="formula-chip">(1-cos(x))/x^2</span> con a = 0.<br>Admite las mismas funciones que las derivadas: sen, cos, tan, sec, csc, cot, asen, acos, atan, senh, cosh, tanh, sqrt, cbrt, exp, ln, log10, abs. Si la sustitución directa es válida se usa el valor exacto; si hay indeterminación se analizan los límites laterales.</div><div class="formgrid"><label>Función f(x)<input id="limitExpr" type="text" data-mk="1" autocomplete="off" spellcheck="false" class="math-expression" placeholder="Ej. (x^2-1)/(x-1)"><span class="field-help">Misma sintaxis que en derivadas: +, -, *, /, ^ y funciones como sen, cos, tan, sqrt, ln.</span></label><label>Valor a<input id="limitPoint" type="text" data-mk="1" autocomplete="off" spellcheck="false" class="math-expression" placeholder="Ej. 1 o pi"><span class="field-help">Punto al que tiende x. Admite expresiones como pi/2.</span></label></div><div class="actions"><button class="btn primary" onclick="solveLimit()">Calcular límite</button></div><div id="mathResult"></div><div id="mathHistory"></div></div>`;
+  box.onkeydown=e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();solveLimit()}};
+  renderHistory('math');attachMathKeyboard();
+ }
+}
+function renderBasicForm(op){
+ const box=$('mathForm');
+ const notes={
+  pct:'Calcula el porcentaje de una cantidad. Completa el valor base y el porcentaje que quieres aplicar.',
+  pow:'Eleva una base a un exponente. El exponente puede ser negativo o decimal.',
+  root:'Obtiene la raíz cuadrada de un número mayor o igual a 0.',
+  eq:'Resuelve una ecuación de primer grado con la forma <b>ax + b = 0</b>. El coeficiente a no puede ser 0.'
+ };
+ const EXPRHELP='Admite expresiones: 2*pi, sen(30°), sqrt(2).';
+ const configs={
+  pct:[inputField('basic_value','Valor',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 250',help:'Cantidad base. '+EXPRHELP}),inputField('basic_percent','Porcentaje (%)',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 15',help:'Porcentaje a aplicar.'})],
+  pow:[inputField('basic_base','Base',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 2',help:EXPRHELP}),inputField('basic_exp','Exponente',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 5'})],
+  root:[inputField('basic_root','Número',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 144',help:'Debe ser mayor o igual a 0. '+EXPRHELP})],
+  eq:[inputField('basic_a','Coeficiente a',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. 4',help:'No puede ser 0.'}),inputField('basic_b','Término b',{type:'text',extra:' data-mk="1" autocomplete="off" spellcheck="false"',placeholder:'Ej. -12'})]
+ };
+ box.innerHTML=`<div class="stack"><div class="mini-note">${notes[op]}</div><div class="formgrid">${configs[op].join('')}</div><div class="actions"><button class="btn primary" onclick="solveBasic('${op}')">Calcular</button></div><div id="mathResult"></div><div id="mathHistory"></div></div>`;
+ box.onkeydown=e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();solveBasic(op)}};
+ renderHistory('math');attachMathKeyboard();
+}
+function parseValue(raw){
+ const s=normalizeExpr(raw==null?'':String(raw));
+ if(!s)return NaN;
+ try{const v=MathEngine.evaluate(MathEngine.parse(s),NaN);if(Number.isFinite(v))return v}catch(_){}
+ const f=parseFloat(s);return Number.isFinite(f)?f:NaN;
+}
+function num(id){const el=$(id);return el?parseValue(el.value):NaN}
+function showMathResult(result,formula,sub,logic,label,restore){$('mathResult').innerHTML=`<div class="result"><strong>${format(result)}</strong><div class="procedure"><h4>Desglose del procedimiento</h4><div class="procedure-step"><span class="stepnum">1</span><div><b>Fórmula empleada</b><br>${formula}</div></div><div class="procedure-step"><span class="stepnum">2</span><div><b>Sustitución exacta</b><br>${sub}</div></div><div class="procedure-step"><span class="stepnum">3</span><div><b>Desarrollo</b><br>${logic}</div></div><div class="procedure-step"><span class="stepnum">4</span><div><b>Resultado</b><br>${format(result)}</div></div></div></div>`;addHistory('math',{label,value:`${sub} = ${format(result)}`,restore})}
+function solveBasic(op){
+ let r,formula,sub,logic,label;
+ if(op==='pct'){const v=num('basic_value'),p=num('basic_percent');if(!Number.isFinite(v)||!Number.isFinite(p))return mathError('Completa ambos valores.');r=v*p/100;formula='% = valor × porcentaje ÷ 100';sub=`${v} × ${p} ÷ 100`;logic='Multiplicamos el valor por el porcentaje y dividimos entre 100.';label='Porcentaje'}
+ if(op==='pow'){const b=num('basic_base'),e=num('basic_exp');if(!Number.isFinite(b)||!Number.isFinite(e))return mathError('Completa base y exponente.');r=b**e;formula='resultado = base^exponente';sub=`${b}^${e}`;logic='Aplicamos la potencia indicada.';label='Potencia'}
+ if(op==='root'){const v=num('basic_root');if(!Number.isFinite(v)||v<0)return mathError('Ingresa un número mayor o igual a 0.');r=Math.sqrt(v);formula='resultado = √n';sub=`√${v}`;logic='Buscamos el número que multiplicado por sí mismo produce el valor ingresado.';label='Raíz cuadrada'}
+ if(op==='eq'){const a=num('basic_a'),b=num('basic_b');if(!Number.isFinite(a)||!Number.isFinite(b)||a===0)return mathError('a debe ser un número distinto de 0.');r=-b/a;formula='x = −b ÷ a';sub=`x = −(${b}) ÷ ${a}`;logic='Restamos b a ambos lados y dividimos entre a para despejar x.';label='Ecuación ax + b = 0'}
+ const campos={pct:['basic_value','basic_percent'],pow:['basic_base','basic_exp'],root:['basic_root'],eq:['basic_a','basic_b']}[op]||[];
+ const fields={};campos.forEach(k=>{const el=$(k);if(el)fields[k]=el.value});
+ showMathResult(r,formula,sub,logic,label,{route:['math',op],fields:fields})
+}
+
+/* Motor algebraico propio: análisis sintáctico, derivación simbólica,
+   simplificación y evaluación numérica. No depende de librerías externas. */
+const MathEngine=(function(){
+ const ALIAS={sen:'sin',seno:'sin',coseno:'cos',tg:'tan',tang:'tan',asen:'asin',arcsen:'asin',arcsin:'asin',arccos:'acos',arctan:'atan',arctg:'atan',senh:'sinh',cosec:'csc',cossec:'csc',ctg:'cot',cotg:'cot',cotan:'cot',log:'ln',lg:'log10',raiz:'sqrt'};
+ const FUNCS=['sin','cos','tan','sec','csc','cot','asin','acos','atan','sinh','cosh','tanh','sqrt','cbrt','exp','ln','log10','abs'];
+ const N=v=>({t:'num',v:v});
+
+ function tokenize(src){
+  const s=String(src).replace(/\s+/g,'');const out=[];let i=0;
+  while(i<s.length){
+   const c=s[i];
+   if((c>='0'&&c<='9')||c==='.'){let j=i;while(j<s.length&&((s[j]>='0'&&s[j]<='9')||s[j]==='.'))j++;const v=parseFloat(s.slice(i,j));if(!Number.isFinite(v))throw new Error('número inválido "'+s.slice(i,j)+'"');out.push({t:'num',v:v});i=j;continue}
+   if(/[a-zA-Z_]/.test(c)){let j=i;while(j<s.length&&/[a-zA-Z0-9_]/.test(s[j]))j++;out.push({t:'id',v:s.slice(i,j)});i=j;continue}
+   if('+-*/^()√∛'.indexOf(c)>=0){out.push({t:c});i++;continue}
+   throw new Error('carácter no permitido "'+c+'"');
+  }
+  return out;
+ }
+ function parse(src){
+  const tk=tokenize(src);let p=0;
+  const peek=()=>tk[p],next=()=>tk[p++];
+  function expr(){return add()}
+  function add(){let n=mul();while(peek()&&(peek().t==='+'||peek().t==='-')){const op=next().t;n={t:op,a:n,b:mul()}}return n}
+  function mul(){
+   let n=unary();
+   for(;;){
+    const q=peek();if(!q)break;
+    if(q.t==='*'||q.t==='/'){next();n={t:q.t,a:n,b:unary()};continue}
+    if(q.t==='num'||q.t==='id'||q.t==='('||q.t==='√'||q.t==='∛'){n={t:'*',a:n,b:unary()};continue}
+    break;
+   }
+   return n;
+  }
+  function unary(){const q=peek();if(q&&q.t==='-'){next();return {t:'neg',a:unary()}}if(q&&q.t==='+'){next();return unary()}return pow()}
+  function pow(){const base=primary();if(peek()&&peek().t==='^'){next();return {t:'^',a:base,b:unary()}}return base}
+  function primary(){
+   const q=next();
+   if(!q)throw new Error('la expresión está incompleta');
+   if(q.t==='√')return {t:'fn',f:'sqrt',a:primary()};
+   if(q.t==='∛')return {t:'fn',f:'cbrt',a:primary()};
+   if(q.t==='num')return N(q.v);
+   if(q.t==='id'){
+    let name=q.v.toLowerCase();name=ALIAS[name]||name;
+    if(FUNCS.indexOf(name)>=0){
+     if(!peek()||peek().t!=='(')throw new Error('falta "(" después de '+name);
+     next();const arg=expr();
+     if(!peek()||peek().t!==')')throw new Error('falta ")" al cerrar '+name);
+     next();return {t:'fn',f:name,a:arg};
+    }
+    if(name==='pi')return {t:'const',name:'π',v:Math.PI};
+    if(name==='e')return {t:'const',name:'e',v:Math.E};
+    if(name==='x')return {t:'var'};
+    throw new Error('solo se admite la variable x (se encontró "'+q.v+'")');
+   }
+   if(q.t==='('){const e=expr();if(!peek()||peek().t!==')')throw new Error('falta un paréntesis de cierre');next();return e}
+   throw new Error('símbolo inesperado');
+  }
+  const ast=expr();
+  if(p<tk.length)throw new Error('sobra contenido al final de la expresión');
+  return ast;
+ }
+
+ function isConst(n){
+  if(n.t==='var')return false;
+  if(n.t==='num'||n.t==='const')return true;
+  if(n.t==='neg'||n.t==='fn')return isConst(n.a);
+  return isConst(n.a)&&isConst(n.b);
+ }
+ function equal(a,b){
+  if(a.t!==b.t)return false;
+  if(a.t==='num')return Math.abs(a.v-b.v)<1e-12;
+  if(a.t==='const')return a.name===b.name;
+  if(a.t==='var')return true;
+  if(a.t==='neg')return equal(a.a,b.a);
+  if(a.t==='fn')return a.f===b.f&&equal(a.a,b.a);
+  return equal(a.a,b.a)&&equal(a.b,b.b);
+ }
+ const isN=(n,v)=>n.t==='num'&&Math.abs(n.v-v)<1e-12;
+ const gcd=(x,y)=>{x=Math.abs(x);y=Math.abs(y);while(y){const z=y;y=x%y;x=z}return x};
+ const nice=v=>Number.isFinite(v)&&Math.abs(v)<1e12&&Number(v.toFixed(8))===v;
+
+ function derivative(n){
+  switch(n.t){
+   case 'num':case 'const':return N(0);
+   case 'var':return N(1);
+   case '+':case '-':return {t:n.t,a:derivative(n.a),b:derivative(n.b)};
+   case 'neg':return {t:'neg',a:derivative(n.a)};
+   case '*':return {t:'+',a:{t:'*',a:derivative(n.a),b:n.b},b:{t:'*',a:n.a,b:derivative(n.b)}};
+   case '/':return {t:'/',a:{t:'-',a:{t:'*',a:derivative(n.a),b:n.b},b:{t:'*',a:n.a,b:derivative(n.b)}},b:{t:'^',a:n.b,b:N(2)}};
+   case '^':{
+    if(isConst(n.b))return {t:'*',a:{t:'*',a:n.b,b:{t:'^',a:n.a,b:{t:'-',a:n.b,b:N(1)}}},b:derivative(n.a)};
+    if(isConst(n.a))return {t:'*',a:{t:'*',a:{t:'^',a:n.a,b:n.b},b:{t:'fn',f:'ln',a:n.a}},b:derivative(n.b)};
+    return {t:'*',a:{t:'^',a:n.a,b:n.b},b:{t:'+',a:{t:'*',a:derivative(n.b),b:{t:'fn',f:'ln',a:n.a}},b:{t:'/',a:{t:'*',a:n.b,b:derivative(n.a)},b:n.a}}};
+   }
+   case 'fn':{
+    const u=n.a,du=derivative(u);let o;
+    switch(n.f){
+     case 'sin':o={t:'fn',f:'cos',a:u};break;
+     case 'cos':o={t:'neg',a:{t:'fn',f:'sin',a:u}};break;
+     case 'tan':o={t:'/',a:N(1),b:{t:'^',a:{t:'fn',f:'cos',a:u},b:N(2)}};break;
+     case 'sec':o={t:'*',a:{t:'fn',f:'sec',a:u},b:{t:'fn',f:'tan',a:u}};break;
+     case 'csc':o={t:'neg',a:{t:'*',a:{t:'fn',f:'csc',a:u},b:{t:'fn',f:'cot',a:u}}};break;
+     case 'cot':o={t:'neg',a:{t:'/',a:N(1),b:{t:'^',a:{t:'fn',f:'sin',a:u},b:N(2)}}};break;
+     case 'asin':o={t:'/',a:N(1),b:{t:'fn',f:'sqrt',a:{t:'-',a:N(1),b:{t:'^',a:u,b:N(2)}}}};break;
+     case 'acos':o={t:'neg',a:{t:'/',a:N(1),b:{t:'fn',f:'sqrt',a:{t:'-',a:N(1),b:{t:'^',a:u,b:N(2)}}}}};break;
+     case 'atan':o={t:'/',a:N(1),b:{t:'+',a:N(1),b:{t:'^',a:u,b:N(2)}}};break;
+     case 'sinh':o={t:'fn',f:'cosh',a:u};break;
+     case 'cosh':o={t:'fn',f:'sinh',a:u};break;
+     case 'tanh':o={t:'/',a:N(1),b:{t:'^',a:{t:'fn',f:'cosh',a:u},b:N(2)}};break;
+     case 'sqrt':o={t:'/',a:N(1),b:{t:'*',a:N(2),b:{t:'fn',f:'sqrt',a:u}}};break;
+     case 'cbrt':o={t:'/',a:N(1),b:{t:'*',a:N(3),b:{t:'^',a:{t:'fn',f:'cbrt',a:u},b:N(2)}}};break;
+     case 'exp':o={t:'fn',f:'exp',a:u};break;
+     case 'ln':o={t:'/',a:N(1),b:u};break;
+     case 'log10':o={t:'/',a:N(1),b:{t:'*',a:u,b:{t:'fn',f:'ln',a:N(10)}}};break;
+     case 'abs':o={t:'/',a:u,b:{t:'fn',f:'abs',a:u}};break;
+     default:throw new Error('función sin regla de derivación: '+n.f);
+    }
+    return {t:'*',a:o,b:du};
+   }
+   default:throw new Error('expresión no derivable');
+  }
+ }
+
+ function simplify(n){
+  if(n.t==='num'||n.t==='var'||n.t==='const')return n;
+  if(n.t==='neg'){const a=simplify(n.a);if(a.t==='num')return N(-a.v);if(a.t==='neg')return a.a;if(a.t==='*'&&a.a.t==='num')return simplify({t:'*',a:N(-a.a.v),b:a.b});return {t:'neg',a:a}}
+  if(n.t==='fn'){const a=simplify(n.a);if(n.f==='ln'&&a.t==='const'&&a.name==='e')return N(1);if(a.t==='num'){const v=applyFn(n.f,a.v);if(Number.isFinite(v)&&Math.abs(v-Math.round(v))<1e-12)return N(Math.round(v))}return {t:'fn',f:n.f,a:a}}
+  const a=simplify(n.a),b=simplify(n.b);
+  switch(n.t){
+   case '+':
+    if(isN(a,0))return b;
+    if(isN(b,0))return a;
+    if(a.t==='num'&&b.t==='num')return N(a.v+b.v);
+    if(b.t==='neg')return simplify({t:'-',a:a,b:b.a});
+    if(b.t==='num'&&b.v<0)return simplify({t:'-',a:a,b:N(-b.v)});
+    if(equal(a,b))return simplify({t:'*',a:N(2),b:a});
+    return {t:'+',a:a,b:b};
+   case '-':
+    if(isN(b,0))return a;
+    if(a.t==='num'&&b.t==='num')return N(a.v-b.v);
+    if(isN(a,0))return simplify({t:'neg',a:b});
+    if(equal(a,b))return N(0);
+    if(b.t==='neg')return simplify({t:'+',a:a,b:b.a});
+    if(b.t==='num'&&b.v<0)return simplify({t:'+',a:a,b:N(-b.v)});
+    return {t:'-',a:a,b:b};
+   case '*':
+    if(isN(a,0)||isN(b,0))return N(0);
+    if(isN(a,1))return b;
+    if(isN(b,1))return a;
+    if(a.t==='num'&&b.t==='num')return N(a.v*b.v);
+    if(isN(a,-1))return simplify({t:'neg',a:b});
+    if(isN(b,-1))return simplify({t:'neg',a:a});
+    if(a.t==='neg')return simplify({t:'neg',a:{t:'*',a:a.a,b:b}});
+    if(b.t==='neg')return simplify({t:'neg',a:{t:'*',a:a,b:b.a}});
+    if(a.t==='/'&&isN(a.a,1))return simplify({t:'/',a:b,b:a.b});
+    if(b.t==='/'&&isN(b.a,1))return simplify({t:'/',a:a,b:b.b});
+    if(b.t==='num')return simplify({t:'*',a:b,b:a});
+    if(a.t==='num'&&b.t==='*'&&b.a.t==='num')return simplify({t:'*',a:N(a.v*b.a.v),b:b.b});
+    if(a.t==='const'&&b.t==='*'&&b.a.t==='num')return simplify({t:'*',a:b.a,b:{t:'*',a:a,b:b.b}});
+    if(a.t==='fn'&&b.t==='fn'&&a.f===b.f&&(a.f==='sqrt')&&equal(a.a,b.a))return a.a;
+    if(equal(a,b))return simplify({t:'^',a:a,b:N(2)});
+    if(a.t==='^'&&equal(a.a,b))return simplify({t:'^',a:b,b:simplify({t:'+',a:a.b,b:N(1)})});
+    if(b.t==='^'&&equal(b.a,a))return simplify({t:'^',a:a,b:simplify({t:'+',a:b.b,b:N(1)})});
+    if(a.t==='^'&&b.t==='^'&&equal(a.a,b.a))return simplify({t:'^',a:a.a,b:simplify({t:'+',a:a.b,b:b.b})});
+    return {t:'*',a:a,b:b};
+   case '/':
+    if(isN(a,0))return N(0);
+    if(isN(b,1))return a;
+    if(a.t==='num'&&b.t==='num'&&b.v!==0){
+     if(nice(a.v/b.v))return N(a.v/b.v);
+     if(Number.isInteger(a.v)&&Number.isInteger(b.v)){const g=gcd(a.v,b.v);if(g>1)return simplify({t:'/',a:N(a.v/g),b:N(b.v/g)});if(b.v<0)return simplify({t:'/',a:N(-a.v),b:N(-b.v)})}
+    }
+    if(equal(a,b))return N(1);
+    if(a.t==='*'&&a.a.t==='num'&&b.t==='*'&&b.a.t==='num'&&b.a.v!==0){const r=a.a.v/b.a.v;if(nice(r))return simplify({t:'/',a:(Math.abs(r-1)<1e-12?a.b:{t:'*',a:N(r),b:a.b}),b:b.b})}
+    if(a.t==='*'&&a.a.t==='num'&&b.t==='num'&&b.v!==0){const r=a.a.v/b.v;if(nice(r))return simplify({t:'*',a:N(r),b:a.b})}
+    if(a.t==='num'&&b.t==='*'&&b.a.t==='num'&&b.a.v!==0){const r=a.v/b.a.v;if(nice(r))return simplify({t:'/',a:N(r),b:b.b})}
+    if(b.t==='^'&&equal(a,b.a))return simplify({t:'^',a:b.a,b:simplify({t:'-',a:N(1),b:b.b})});
+    if(a.t==='*'&&b.t==='^'&&equal(a.b,b.a))return simplify({t:'*',a:a.a,b:{t:'^',a:b.a,b:simplify({t:'-',a:N(1),b:b.b})}});
+    if(b.t==='neg')return simplify({t:'neg',a:{t:'/',a:a,b:b.a}});
+    if(a.t==='neg')return simplify({t:'neg',a:{t:'/',a:a.a,b:b}});
+    return {t:'/',a:a,b:b};
+   case '^':
+    if(isN(b,0))return N(1);
+    if(isN(b,1))return a;
+    if(isN(a,1))return N(1);
+    if(a.t==='num'&&b.t==='num'){const v=Math.pow(a.v,b.v);if(nice(v))return N(v)}
+    if(a.t==='fn'&&a.f==='sqrt'&&b.t==='num'&&Math.abs(b.v-2)<1e-12)return a.a;
+    if(a.t==='^')return simplify({t:'^',a:a.a,b:simplify({t:'*',a:a.b,b:b})});
+    return {t:'^',a:a,b:b};
+   default:return n;
+  }
+ }
+
+ function numStr(v){
+  if(!Number.isFinite(v))return v>0?'∞':(v<0?'−∞':'indefinido');
+  if(Number.isInteger(v))return String(v);
+  let s=String(Number(v.toPrecision(12)));
+  if(s.indexOf('e')<0&&s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');
+  return s;
+ }
+ const DISP={sin:'sen',asin:'asen',sinh:'senh'};
+ function prec(n){if(n.t==='+'||n.t==='-')return 1;if(n.t==='*'||n.t==='/')return 2;if(n.t==='neg')return 3;if(n.t==='^')return 4;return 5}
+ function wrap(n,min){const s=fmt(n);return prec(n)<min?'('+s+')':s}
+ function fmt(n){
+  switch(n.t){
+   case 'num':return numStr(n.v);
+   case 'const':return n.name;
+   case 'var':return 'x';
+   case 'neg':return '-'+wrap(n.a,2);
+   case 'fn':{
+    const bare=n.a.t==='num'||n.a.t==='var'||n.a.t==='const';
+    if(n.f==='sqrt')return '√'+(bare?fmt(n.a):'('+fmt(n.a)+')');
+    if(n.f==='cbrt')return '∛'+(bare?fmt(n.a):'('+fmt(n.a)+')');
+    return (DISP[n.f]||n.f)+'('+fmt(n.a)+')';
+   }
+   case '+':return fmt(n.a)+' + '+wrap(n.b,1);
+   case '-':return fmt(n.a)+' - '+wrap(n.b,2);
+   case '*':return wrap(n.a,2)+'·'+wrap(n.b,2);
+   case '/':return wrap(n.a,2)+'/'+wrap(n.b,3);
+   case '^':{const rad=n.a.t==='fn'&&(n.a.f==='sqrt'||n.a.f==='cbrt');return (rad?'('+fmt(n.a)+')':wrap(n.a,5))+'^'+wrap(n.b,4)}
+   default:return '?';
+  }
+ }
+ function applyFn(f,v){
+  switch(f){
+   case 'sin':return Math.sin(v);case 'cos':return Math.cos(v);case 'tan':return Math.tan(v);
+   case 'sec':return 1/Math.cos(v);case 'csc':return 1/Math.sin(v);case 'cot':return Math.cos(v)/Math.sin(v);
+   case 'asin':return Math.asin(v);case 'acos':return Math.acos(v);case 'atan':return Math.atan(v);
+   case 'sinh':return Math.sinh(v);case 'cosh':return Math.cosh(v);case 'tanh':return Math.tanh(v);
+   case 'sqrt':return Math.sqrt(v);case 'cbrt':return Math.cbrt(v);case 'exp':return Math.exp(v);
+   case 'ln':return Math.log(v);case 'log10':return Math.log10(v);case 'abs':return Math.abs(v);
+   default:return NaN;
+  }
+ }
+ function evaluate(n,x){
+  switch(n.t){
+   case 'num':return n.v;
+   case 'const':return n.v;
+   case 'var':return x;
+   case 'neg':return -evaluate(n.a,x);
+   case '+':return evaluate(n.a,x)+evaluate(n.b,x);
+   case '-':return evaluate(n.a,x)-evaluate(n.b,x);
+   case '*':return evaluate(n.a,x)*evaluate(n.b,x);
+   case '/':return evaluate(n.a,x)/evaluate(n.b,x);
+   case '^':return Math.pow(evaluate(n.a,x),evaluate(n.b,x));
+   case 'fn':return applyFn(n.f,evaluate(n.a,x));
+   default:return NaN;
+  }
+ }
+ function subst(n,val){
+  if(!n)return n;
+  if(n.t==='var')return N(val);
+  if(n.t==='num'||n.t==='const')return n;
+  if(n.t==='neg')return {t:'neg',a:subst(n.a,val)};
+  if(n.t==='fn')return {t:'fn',f:n.f,a:subst(n.a,val)};
+  return {t:n.t,a:subst(n.a,val),b:subst(n.b,val)};
+ }
+ function expand(n,d){
+  d=d||0;if(!n||d>14)return n;
+  if(n.t==='num'||n.t==='var'||n.t==='const')return n;
+  if(n.t==='neg')return {t:'neg',a:expand(n.a,d+1)};
+  if(n.t==='fn')return {t:'fn',f:n.f,a:expand(n.a,d+1)};
+  const a=expand(n.a,d+1),b=expand(n.b,d+1);
+  if(n.t==='*'){
+   if(a.t==='+'||a.t==='-')return expand({t:a.t,a:{t:'*',a:a.a,b:b},b:{t:'*',a:a.b,b:b}},d+1);
+   if(b.t==='+'||b.t==='-')return expand({t:b.t,a:{t:'*',a:a,b:b.a},b:{t:'*',a:a,b:b.b}},d+1);
+   return {t:'*',a:a,b:b};
+  }
+  if(n.t==='^'&&b.t==='num'&&Number.isInteger(b.v)&&b.v>=2&&b.v<=4&&(a.t==='+'||a.t==='-')){
+   let r=a;for(let i=1;i<b.v;i++)r={t:'*',a:r,b:a};
+   return expand(r,d+1);
+  }
+  return {t:n.t,a:a,b:b};
+ }
+ function splitTerms(n,sign,out){
+  if(n.t==='+'){splitTerms(n.a,sign,out);splitTerms(n.b,sign,out);return}
+  if(n.t==='-'){splitTerms(n.a,sign,out);splitTerms(n.b,-sign,out);return}
+  if(n.t==='neg'){splitTerms(n.a,-sign,out);return}
+  let coef=sign;const rest=[];
+  (function walk(m){
+   if(m.t==='*'){walk(m.a);walk(m.b);return}
+   if(m.t==='num'){coef*=m.v;return}
+   if(m.t==='neg'){coef*=-1;walk(m.a);return}
+   rest.push(m);
+  })(n);
+  out.push({coef:coef,rest:rest,key:rest.map(fmt).sort().join(' * ')});
+ }
+ function collect(n){
+  const list=[];splitTerms(simplify(n),1,list);
+  const map={},order=[];
+  list.forEach(t=>{if(!(t.key in map)){map[t.key]={coef:0,rest:t.rest};order.push(t.key)}map[t.key].coef+=t.coef});
+  let node=null;
+  order.forEach(k=>{
+   const e=map[k];
+   if(Math.abs(e.coef)<1e-10)return;
+   let term;
+   if(!e.rest.length)term=N(e.coef);
+   else{
+    const base=e.rest.reduce((A,B)=>({t:'*',a:A,b:B}));
+    term=Math.abs(e.coef-1)<1e-12?base:{t:'*',a:N(e.coef),b:base};
+   }
+   node=node?{t:'+',a:node,b:term}:term;
+  });
+  return simplify(node||N(0));
+ }
+ function fracOf(v){
+  if(!Number.isFinite(v)||Number.isInteger(v))return null;
+  for(let q=2;q<=24;q++){const p=v*q;if(Math.abs(p-Math.round(p))<1e-10)return [Math.round(p),q]}
+  return null;
+ }
+ function mulN(a,b){
+  if(a.t==='num'&&b.t==='num')return N(a.v*b.v);
+  if(isN(a,1))return b;if(isN(b,1))return a;
+  if(isN(a,-1))return {t:'neg',a:b};if(isN(b,-1))return {t:'neg',a:a};
+  return {t:'*',a:a,b:b};
+ }
+ function fixFrac(a,b){
+  if(a.t==='/')return fixFrac(a.a,mulN(a.b,b));
+  if(a.t==='num'&&b.t==='*'&&b.a.t==='num'&&b.a.v!==0&&Math.abs(a.v)>=Math.abs(b.a.v)-1e-12){
+   const r=a.v/b.a.v;if(Number.isFinite(r)&&Math.abs(Number(r.toFixed(8))-r)<1e-12)return fixFrac(N(r),b.b);
+  }
+  if(a.t==='num'){
+   const f=fracOf(a.v);
+   if(f&&Math.abs(f[0])===1)return {t:'/',a:N(f[0]),b:mulN(N(f[1]),b)};
+   if(f)return {t:'/',a:N(f[0]),b:mulN(N(f[1]),b)};
+  }
+  if(a.t==='*'&&a.a.t==='num'&&b.t==='*'&&b.a.t==='num'&&b.a.v!==0&&Math.abs(a.a.v)>=Math.abs(b.a.v)-1e-12){
+   const r=a.a.v/b.a.v;
+   if(Number.isFinite(r)&&Math.abs(Number(r.toFixed(8))-r)<1e-12)return fixFrac(mulN(N(r),a.b),b.b);
+  }
+  if(a.t==='*'&&a.a.t==='num'){
+   const f=fracOf(a.a.v);
+   if(f)return {t:'/',a:mulN(N(f[0]),a.b),b:mulN(N(f[1]),b)};
+  }
+  if(a.t==='neg')return {t:'neg',a:fixFrac(a.a,b)};
+  return {t:'/',a:a,b:b};
+ }
+ function pretty(n){
+  if(!n)return n;
+  if(n.t==='num'||n.t==='var'||n.t==='const')return n;
+  if(n.t==='neg')return {t:'neg',a:pretty(n.a)};
+  if(n.t==='fn')return {t:'fn',f:n.f,a:pretty(n.a)};
+  const a=pretty(n.a),b=pretty(n.b);
+  if(n.t==='^'){
+   if(b.t==='num'){
+    if(b.v<0){const e=-b.v;return fixFrac(N(1),e===1?a:pretty({t:'^',a:a,b:N(e)}))}
+    if(Math.abs(b.v-.5)<1e-12)return {t:'fn',f:'sqrt',a:a};
+    if(Math.abs(b.v-1/3)<1e-12)return {t:'fn',f:'cbrt',a:a};
+    if(Math.abs(b.v-1.5)<1e-12)return mulN(a,{t:'fn',f:'sqrt',a:a});
+   }
+   return {t:'^',a:a,b:b};
+  }
+  if(n.t==='*'){
+   if(b.t==='/')return fixFrac(mulN(a,b.a),b.b);
+   if(a.t==='/')return fixFrac(mulN(a.a,b),a.b);
+   if(a.t==='num'){const f=fracOf(a.v);if(f)return fixFrac(mulN(N(f[0]),b),N(f[1]))}
+   return {t:'*',a:a,b:b};
+  }
+  if(n.t==='/')return fixFrac(a,b);
+  return {t:n.t,a:a,b:b};
+ }
+ function show(n){return fmt(pretty(n))}
+ return {parse:parse,derivative:derivative,simplify:simplify,fmt:fmt,show:show,pretty:pretty,
+  evaluate:evaluate,n:numStr,num:N,subst:subst,expand:expand,collect:collect,eq:equal,isConst:isConst};
+})();
+
+function normalizeExpr(expr){
+ return String(expr||'').trim()
+  .replace(/⁰/g,'^0').replace(/¹/g,'^1').replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4').replace(/⁵/g,'^5')
+  .replace(/π/g,'pi')
+  .replace(/×/g,'*').replace(/·/g,'*').replace(/÷/g,'/')
+  .replace(/[−–—]/g,'-').replace(/,/g,'.')
+  .replace(/(\d+(?:\.\d+)?)\s*[°º]/g,'($1*pi/180)')
+  .replace(/[\[\{]/g,'(').replace(/[\]\}]/g,')');
+}
+function solveDerivative(){
+ const raw=$('derivExpr').value,expr=normalizeExpr(raw),pointRaw=$('derivPoint').value.trim();
+ if(!expr)return mathError('Escribe una función f(x).');
+ let ast;
+ try{ast=MathEngine.parse(expr)}catch(e){return mathError('No se pudo leer la función: '+e.message+'. Ejemplo válido: x^3 - 4x + 2')}
+ let simple,dast,fs,ds;
+ try{
+  simple=MathEngine.simplify(ast);
+  dast=MathEngine.simplify(MathEngine.derivative(simple));
+  fs=MathEngine.show(simple);ds=MathEngine.show(dast);
+ }catch(e){return mathError('No se pudo derivar la función: '+e.message)}
+ let evalBlock='',headline=ds,histExtra='';
+ if(pointRaw!==''){
+  const x=parseValue(pointRaw);
+  if(!Number.isFinite(x))return mathError('El punto de evaluación debe ser un número o una expresión numérica (por ejemplo pi/4).');
+  const xs=esc(pointRaw.trim()),xn=MathEngine.n(x),xLab=xs===xn?xs:`${xs} = ${xn}`;
+  const fx=MathEngine.evaluate(ast,x),dfx=MathEngine.evaluate(dast,x);
+  if(!Number.isFinite(fx))return mathError(`La función no está definida en x = ${xn}, así que no puede evaluarse en ese punto.`);
+  if(!Number.isFinite(dfx))return mathError(`La derivada no está definida en x = ${xn} (revisa el dominio de la función).`);
+  headline=`f'(${xs}) = ${MathEngine.n(dfx)}`;
+  evalBlock=`<div class="procedure-step"><span class="stepnum">4</span><div><b>Evaluación en el punto</b><br>x = ${xLab}<br>f(${xs}) = ${MathEngine.n(fx)}<br>f'(${xs}) = ${esc(ds)} evaluada en x = ${xn} → <b>${MathEngine.n(dfx)}</b><br><span class="muted">La pendiente de la recta tangente en ese punto es ${MathEngine.n(dfx)}.</span></div></div>`;
+  histExtra=` ; x=${xs} → ${MathEngine.n(dfx)}`;
+ }
+ $('mathResult').innerHTML=`<div class="result"><strong>${esc(headline)}</strong><div class="steps">Función interpretada: <b>${esc(fs)}</b><br>Derivada simbólica: <b>${esc(ds)}</b></div><div class="procedure"><h4>Desglose del procedimiento</h4><div class="procedure-step"><span class="stepnum">1</span><div><b>Función</b><br>f(x) = ${esc(fs)}</div></div><div class="procedure-step"><span class="stepnum">2</span><div><b>Regla aplicada</b><br>f'(x) = d/dx [ f(x) ] — se aplican las reglas de suma, producto, cociente, potencia y cadena según corresponda.</div></div><div class="procedure-step"><span class="stepnum">3</span><div><b>Derivada simplificada</b><br>f'(x) = ${esc(ds)}</div></div>${evalBlock||`<div class="procedure-step"><span class="stepnum">4</span><div><b>Resultado</b><br>f'(x) = ${esc(ds)}</div></div>`}</div></div>`;
+ addHistory('math',{label:'Derivada',value:`${fs} → ${ds}${histExtra}`,restore:{route:['math','derivative'],fields:{derivExpr:$('derivExpr').value,derivPoint:$('derivPoint').value}}});
+}
+function mathError(msg){$('mathResult').innerHTML=`<div class="result error">${esc(msg)}</div>`}
+
+/* ===================== MOTOR DE LÍMITES ===================== */
+const ME=MathEngine;
+function limEval(n,x){try{const v=ME.evaluate(n,x);return Number.isFinite(v)?v:null}catch(_){return null}}
+function limZero(v){return v!==null&&Math.abs(v)<1e-9}
+
+/* --- utilidades de polinomios (coeficientes ascendentes) --- */
+function polyTrim(c){while(c.length>1&&Math.abs(c[c.length-1])<1e-11)c.pop();return c}
+function polyMul(A,B){const r=new Array(A.length+B.length-1).fill(0);A.forEach((x,i)=>B.forEach((y,j)=>{r[i+j]+=x*y}));return polyTrim(r)}
+function polyOf(n){
+ if(!n)return null;
+ switch(n.t){
+  case 'num':case 'const':return [n.v];
+  case 'var':return [0,1];
+  case 'neg':{const p=polyOf(n.a);return p?polyTrim(p.map(c=>-c)):null}
+  case '+':case '-':{
+   const A=polyOf(n.a),B=polyOf(n.b);if(!A||!B)return null;
+   const L=Math.max(A.length,B.length),r=[],sg=n.t==='+'?1:-1;
+   for(let i=0;i<L;i++)r.push((A[i]||0)+sg*(B[i]||0));
+   return polyTrim(r);
+  }
+  case '*':{const A=polyOf(n.a),B=polyOf(n.b);return A&&B?polyMul(A,B):null}
+  case '/':{
+   const B=polyOf(n.b);if(!B||B.length!==1||Math.abs(B[0])<1e-12)return null;
+   const A=polyOf(n.a);return A?polyTrim(A.map(c=>c/B[0])):null;
+  }
+  case '^':{
+   const A=polyOf(n.a),e=n.b&&n.b.t==='num'?n.b.v:null;
+   if(!A||e===null||!Number.isInteger(e)||e<0||e>10)return null;
+   let r=[1];for(let i=0;i<e;i++)r=polyMul(r,A);return polyTrim(r);
+  }
+  default:return null;
+ }
+}
+function polyEval(c,x){let r=0;for(let i=c.length-1;i>=0;i--)r=r*x+c[i];return r}
+function polyDeg(c){return c.length-1}
+function polyAst(c){
+ const pw=k=>k===1?{t:'var'}:{t:'^',a:{t:'var'},b:ME.num(k)};
+ let node=null;
+ for(let k=c.length-1;k>=0;k--){
+  let v=c[k];
+  if(Math.abs(v)<1e-11)continue;
+  if(Math.abs(v-Math.round(v))<1e-9)v=Math.round(v);
+  const term=k===0?ME.num(v):(Math.abs(v-1)<1e-12?pw(k):(Math.abs(v+1)<1e-12?{t:'neg',a:pw(k)}:{t:'*',a:ME.num(v),b:pw(k)}));
+  node=node?{t:'+',a:node,b:term}:term;
+ }
+ return ME.simplify(node||ME.num(0));
+}
+/* división sintética por (x - a) */
+function synthDiv(c,a){
+ const d=c.slice().reverse(),out=[d[0]];
+ for(let i=1;i<d.length;i++)out.push(d[i]+out[i-1]*a);
+ const r=out.pop();
+ return {q:polyTrim(out.reverse()),r:r};
+}
+/* división larga A / B, devuelve cociente si el residuo es nulo */
+function polyDivExact(A,B){
+ if(!A||!B||B.length===0)return null;
+ const a=A.slice(),b=B.slice();
+ polyTrim(a);polyTrim(b);
+ if(b.length===1)return Math.abs(b[0])<1e-12?null:polyTrim(a.map(c=>c/b[0]));
+ if(a.length<b.length)return polyTrim(a).length===1&&Math.abs(a[0])<1e-9?[0]:null;
+ const q=new Array(a.length-b.length+1).fill(0);
+ for(let i=a.length-b.length;i>=0;i--){
+  const f=a[i+b.length-1]/b[b.length-1];
+  q[i]=f;
+  for(let j=0;j<b.length;j++)a[i+j]-=f*b[j];
+ }
+ for(let i=0;i<a.length;i++)if(Math.abs(a[i])>1e-7)return null;
+ return polyTrim(q);
+}
+function hasRadical(n){
+ if(!n)return false;
+ if(n.t==='fn')return n.f==='sqrt'||n.f==='cbrt'||hasRadical(n.a);
+ if(n.t==='^'&&n.b&&n.b.t==='num'&&!Number.isInteger(n.b.v))return true;
+ if(n.t==='neg')return hasRadical(n.a);
+ if(n.a||n.b)return hasRadical(n.a)||hasRadical(n.b);
+ return false;
+}
+function conjugateOf(n){
+ if(n.t==='+')return {t:'-',a:n.a,b:n.b};
+ if(n.t==='-')return {t:'+',a:n.a,b:n.b};
+ return null;
+}
+/* propiedades de límites presentes en la expresión */
+function limitProps(n,set){
+ set=set||{};
+ if(!n)return set;
+ if(n.t==='num'||n.t==='const')set.const=1;
+ else if(n.t==='var')set.ident=1;
+ else if(n.t==='+')set.sum=1;
+ else if(n.t==='-')set.sub=1;
+ else if(n.t==='*'){(n.a.t==='num'||n.b.t==='num')?set.scalar=1:set.prod=1}
+ else if(n.t==='/')set.quot=1;
+ else if(n.t==='^')set.pow=1;
+ else if(n.t==='neg')set.scalar=1;
+ else if(n.t==='fn'){(n.f==='sqrt'||n.f==='cbrt')?set.root=1:set.comp=1}
+ if(n.a)limitProps(n.a,set);
+ if(n.b)limitProps(n.b,set);
+ return set;
+}
+const PROP_TEXT={
+ const:'límite de una constante (lím c = c)',
+ ident:'límite de la identidad (lím x = a)',
+ scalar:'constante por función (lím c·f = c·lím f)',
+ sum:'límite de una suma (lím (f+g) = lím f + lím g)',
+ sub:'límite de una resta (lím (f−g) = lím f − lím g)',
+ prod:'límite de un producto (lím f·g = lím f · lím g)',
+ quot:'límite de un cociente (lím f/g = lím f ÷ lím g, con lím g ≠ 0)',
+ pow:'límite de una potencia (lím fⁿ = (lím f)ⁿ)',
+ root:'límite de una raíz (lím √f = √(lím f))',
+ comp:'límite de una función continua compuesta (lím g(f) = g(lím f))'
+};
+function propsList(n){
+ const s=limitProps(n),k=Object.keys(s).filter(x=>PROP_TEXT[x]);
+ return k.length?k.map(x=>PROP_TEXT[x]):[PROP_TEXT.const];
+}
+
+/* --- destino del límite --- */
+function parseLimitTarget(raw){
+ let s=String(raw||'').trim().toLowerCase().replace(/\s+/g,'');
+ if(!s)return null;
+ s=s.replace(/∞/g,'inf').replace(/[−–—]/g,'-');
+ let side=0;
+ const last=s[s.length-1];
+ if((last==='⁻'||last==='⁺')||((last==='-'||last==='+')&&s.length>1&&/[0-9a-z)]/.test(s[s.length-2]))){
+  side=(last==='⁻'||last==='-')?-1:1;
+  s=s.slice(0,-1);
+ }
+ if(/^\+?inf(inito)?$/.test(s))return {inf:1,side:0,label:'+∞'};
+ if(/^-inf(inito)?$/.test(s))return {inf:-1,side:0,label:'−∞'};
+ const v=parseValue(s);
+ if(!Number.isFinite(v))return null;
+ return {inf:0,a:v,side:side,label:(String(v)===s?s:s+' = '+ME.n(v))+(side<0?'⁻':side>0?'⁺':'')};
+}
+
+/* --- resultado --- */
+const LV=(ast)=>({k:'val',ast:ast});
+const LI=(sg)=>({k:'inf',sg:sg});
+const LD=(why)=>({k:'dne',why:why||''});
+function resultText(r){
+ if(!r)return 'No determinado';
+ if(r.k==='val')return ME.show(r.ast);
+ if(r.k==='inf')return r.sg>0?'+∞':'−∞';
+ return 'El límite no existe';
+}
+function resultNum(r){
+ if(!r)return null;
+ if(r.k==='val'){try{const v=ME.evaluate(r.ast,0);return Number.isFinite(v)?v:null}catch(_){return null}}
+ if(r.k==='inf')return r.sg>0?Infinity:-Infinity;
+ return NaN;
+}
+
+/* --- números exactos (fracciones pequeñas en vez de decimales) --- */
+function exactNum(v){
+ if(!Number.isFinite(v))return ME.num(v);
+ if(Math.abs(v-Math.round(v))<1e-10)return ME.num(Math.round(v));
+ for(let q=2;q<=48;q++){const p=v*q;if(Math.abs(p-Math.round(p))<1e-9)return {t:'/',a:ME.num(Math.round(p)),b:ME.num(q)}}
+ return ME.num(Number(v.toPrecision(10)));
+}
+function exactify(ast){
+ if(ast&&ast.t==='num')return exactNum(ast.v);
+ return ast;
+}
+
+/* --- valor exacto por sustitución --- */
+function exactAt(node,a){
+ const v=limEval(node,a);
+ if(v===null)return null;
+ const sub=ME.simplify(ME.subst(node,a));
+ const sv=limEval(sub,0);
+ if(sv!==null&&Math.abs(sv-v)<1e-7*(1+Math.abs(v)))return exactify(sub);
+ return exactNum(v);
+}
+
+/* --- signo al acercarse --- */
+function sideSign(node,a,dir){
+ for(const h of [1e-3,1e-4,1e-5,1e-6,1e-7]){
+  const v=limEval(node,a+dir*h);
+  if(v!==null&&Math.abs(v)>1e-6)return Math.sign(v);
+ }
+ return 0;
+}
+
+/* --- núcleo --- */
+function limitCore(node,tgt,steps,depth){
+ depth=depth||0;
+ if(depth>8)return null;
+ if(tgt.inf)return limitInfinity(node,tgt,steps,depth);
+ const a=tgt.a;
+
+ /* 1. sustitución directa */
+ const direct=limEval(node,a);
+ if(direct!==null){
+  const ex=exactAt(node,a);
+  if(depth===0)steps.push({t:'Sustitución directa',d:`La función está definida y es continua en x = ${ME.n(a)}, así que el límite es simplemente f(${ME.n(a)}).<br>lím = <b>${esc(ME.show(ex))}</b>`});
+  else steps.push({t:'Sustitución',d:`Al sustituir x = ${ME.n(a)} en la expresión reducida se obtiene <b>${esc(ME.show(ex))}</b>`});
+  return LV(ex);
+ }
+
+ /* 2. cociente */
+ if(node.t==='/'){
+  const nv=limEval(node.a,a),dv=limEval(node.b,a);
+
+  /* 2a. denominador → 0 y numerador ≠ 0 : límite infinito */
+  if(limZero(dv)&&nv!==null&&!limZero(nv)){
+   const sl=sideSign(node,a,-1),sr=sideSign(node,a,1);
+   steps.push({t:'Límite infinito',d:`El numerador tiende a ${ME.n(nv)} y el denominador a 0, así que el cociente crece sin cota: hay una <b>asíntota vertical</b> en x = ${ME.n(a)}.<br>Por la izquierda el signo es ${sl<0?'negativo':'positivo'} y por la derecha ${sr<0?'negativo':'positivo'}.`});
+   if(tgt.side<0)return LI(sl||1);
+   if(tgt.side>0)return LI(sr||1);
+   if(sl&&sr&&sl===sr)return LI(sl);
+   return LD(`por la izquierda tiende a ${sl<0?'−∞':'+∞'} y por la derecha a ${sr<0?'−∞':'+∞'}`);
+  }
+
+  /* 2b. indeterminación 0/0 */
+  if(limZero(nv)&&limZero(dv)){
+   if(depth===0)steps.push({t:'Indeterminación 0/0',d:`Al sustituir x = ${ME.n(a)} el numerador y el denominador valen 0, de modo que <b>0/0</b> no es un resultado: es una indeterminación que hay que levantar algebraicamente.`});
+   const P=polyOf(node.a),Q=polyOf(node.b);
+
+   /* factorización */
+   if(P&&Q&&polyDeg(P)>0&&polyDeg(Q)>0){
+    let p=P,q=Q,vueltas=0;
+    while(Math.abs(polyEval(p,a))<1e-8&&Math.abs(polyEval(q,a))<1e-8&&polyDeg(p)>0&&polyDeg(q)>0&&vueltas<6){
+     p=synthDiv(p,a).q;q=synthDiv(q,a).q;vueltas++;
+    }
+    if(vueltas>0){
+     const fac=a===0?'x':(a>0?`(x - ${ME.n(a)})`:`(x + ${ME.n(-a)})`);
+     const red={t:'/',a:polyAst(p),b:polyAst(q)};
+     steps.push({t:'Factorización',d:`Como x = ${ME.n(a)} anula a ambos polinomios, ${fac}${vueltas>1?'<sup>'+vueltas+'</sup>':''} es factor común. Dividiendo arriba y abajo y cancelándolo:<br>${esc(ME.show(node))} = ${esc(ME.show(red))}<br><span class="muted">La cancelación es válida porque x tiende a ${ME.n(a)} pero nunca llega a valer ${ME.n(a)}.</span>`});
+     return limitCore(ME.simplify(red),tgt,steps,depth+1);
+    }
+   }
+
+   /* conjugado */
+   if(hasRadical(node)){
+    const conj=conjugateOf(node.a)||conjugateOf(node.b);
+    const enNum=!!conjugateOf(node.a)&&hasRadical(node.a);
+    if(conj){
+     const other=enNum?node.b:node.a;
+     const target=enNum?node.a:node.b;
+     const prod=ME.collect(ME.expand({t:'*',a:target,b:conj}));
+     const Pp=polyOf(prod),Oo=polyOf(other);
+     let red=null;
+     if(Pp&&Oo){
+      const Q2=polyDivExact(Pp,Oo);
+      if(Q2)red=enNum?{t:'/',a:polyAst(Q2),b:conj}:{t:'/',a:conj,b:polyAst(Q2)};
+     }
+     if(!red)red=enNum?{t:'/',a:prod,b:{t:'*',a:other,b:conj}}:{t:'/',a:{t:'*',a:other,b:conj},b:prod};
+     steps.push({t:'Racionalización',d:`Hay un radical en el ${enNum?'numerador':'denominador'}. Multiplicamos arriba y abajo por el conjugado <b>${esc(ME.show(conj))}</b>, que convierte ${esc(ME.show(target))} en ${esc(ME.show(prod))} y permite cancelar el factor que causaba el 0/0:<br>${esc(ME.show(node))} = ${esc(ME.show(red))}`});
+     const r=limitCore(ME.simplify(red),tgt,steps,depth+1);
+     if(r)return r;
+    }
+   }
+
+   /* L'Hôpital */
+   return lhopital(node,tgt,steps,depth,'0/0');
+  }
+
+  /* 2c. ∞/∞ */
+  if(nv===null&&dv===null)return lhopital(node,tgt,steps,depth,'∞/∞');
+ }
+
+ /* 3. fuera del dominio por otro motivo */
+ const sl=sideSign(node,a,-1),sr=sideSign(node,a,1);
+ const vl=limEval(node,a-1e-6),vr=limEval(node,a+1e-6);
+ if(vl===null&&vr===null)return null;
+ const big=v=>v!==null&&Math.abs(v)>1e6;
+ if(big(vl)||big(vr)){
+  steps.push({t:'Comportamiento infinito',d:`La expresión no está definida en x = ${ME.n(a)} y sus valores crecen sin cota al acercarse: hay una asíntota vertical.`});
+  if(tgt.side<0)return vl===null?null:LI(sl||1);
+  if(tgt.side>0)return vr===null?null:LI(sr||1);
+  if(vl!==null&&vr!==null&&sl===sr)return LI(sl||1);
+  return LD('los valores se disparan con signos distintos a cada lado');
+ }
+ return null;
+}
+
+function lhopital(node,tgt,steps,depth,forma){
+ const dn=ME.simplify(ME.derivative(ME.simplify(node.a)));
+ const dd=ME.simplify(ME.derivative(ME.simplify(node.b)));
+ const dz=limEval(dd,tgt.inf?0:tgt.a);
+ if(dz!==null&&Math.abs(dz)<1e-12&&depth>5)return null;
+ const nuevo=ME.simplify({t:'/',a:dn,b:dd});
+ const txt=ME.show(node);
+ const notable=(!tgt.inf&&Math.abs(tgt.a)<1e-12&&/sen\(|tan\(|cos\(/.test(txt))
+  ?'<br><span class="muted">En clase este caso también se resuelve con los límites notables lím<sub>u→0</sub> sen(u)/u = 1 y lím<sub>u→0</sub> (1−cos u)/u² = 1/2.</span>':'';
+ steps.push({t:"Regla de L'Hôpital",d:`Sigue habiendo la indeterminación <b>${forma}</b>, así que derivamos numerador y denominador por separado:<br>lím ${esc(txt)} = lím ${esc(ME.show(nuevo))}${notable}`});
+ return limitCore(nuevo,tgt,steps,depth+1);
+}
+
+function limitInfinity(node,tgt,steps,depth){
+ const s=tgt.inf,big=s>0?1:-1;
+ const P=polyOf(node);
+ if(P){
+  const g=polyDeg(P);
+  if(g===0){steps.push({t:'Función constante',d:`La expresión no depende de x, así que su límite en el infinito es el mismo valor.`});return LV(ME.num(P[0]))}
+  const lead=P[g],sg=Math.sign(lead)*(big>0?1:Math.pow(-1,g));
+  steps.push({t:'Término dominante',d:`Cuando x → ${s>0?'+∞':'−∞'} manda el término de mayor grado, ${esc(ME.show(polyAst(P.map((c,i)=>i===g?c:0))))}. Su signo determina el resultado.`});
+  return LI(sg);
+ }
+ if(node.t==='/'){
+  const A=polyOf(node.a),B=polyOf(node.b);
+  if(A&&B){
+   const gn=polyDeg(A),gd=polyDeg(B),m=Math.max(gn,gd);
+   steps.push({t:'Dividir entre la mayor potencia',d:`Dividimos numerador y denominador entre x<sup>${m}</sup>. Cada término de la forma c/x<sup>k</sup> con k &gt; 0 tiende a 0 cuando x → ${s>0?'+∞':'−∞'}, así que solo sobreviven los términos de mayor grado.`});
+   if(gn<gd){steps.push({t:'Comparación de grados',d:`El grado del numerador (${gn}) es menor que el del denominador (${gd}): el cociente tiende a <b>0</b>.`});return LV(ME.num(0))}
+   if(gn===gd){
+    const val=exactify(ME.simplify({t:'/',a:ME.num(A[gn]),b:ME.num(B[gd])}));
+    steps.push({t:'Comparación de grados',d:`Los grados coinciden (${gn}), así que el límite es el cociente de los coeficientes principales: ${ME.n(A[gn])} ÷ ${ME.n(B[gd])} = <b>${esc(ME.show(val))}</b>`});
+    return LV(val);
+   }
+   const sg=Math.sign(A[gn]/B[gd])*(big>0?1:Math.pow(-1,gn-gd));
+   steps.push({t:'Comparación de grados',d:`El grado del numerador (${gn}) supera al del denominador (${gd}), así que el cociente crece sin cota.`});
+   return LI(sg);
+  }
+  const nb=infBehavior(node.a,big),db=infBehavior(node.b,big);
+  if(nb==='inf'&&db==='inf')return lhopital(node,tgt,steps,depth,'∞/∞');
+  if(nb==='zero'&&db==='zero')return lhopital(node,tgt,steps,depth,'0/0');
+  if(db==='inf'&&nb==='finite'){steps.push({t:'Numerador acotado',d:`El numerador se mantiene acotado mientras el denominador crece sin cota, así que el cociente tiende a <b>0</b>.`});return LV(ME.num(0))}
+ }
+ /* clasificación por comportamiento */
+ const c=classifySeq([1e2,1e3,1e4,1e5,1e6,1e7,1e8].map(x=>limEval(node,big*x)),true);
+ if(c.k==='inf'){
+  steps.push({t:'Crecimiento sin cota',d:'Al evaluar la expresión para valores de x cada vez mayores en magnitud, los resultados crecen sin límite.'});
+  return LI(c.v);
+ }
+ if(c.k==='val'){
+  steps.push({t:'Asíntota horizontal',d:'Al evaluar la expresión para valores de x cada vez mayores, los resultados se estabilizan: la función tiene una asíntota horizontal.'});
+  return LV(exactNum(c.v));
+ }
+ return null;
+}
+
+/* --- clasificación de una sucesión de valores --- */
+function classifySeq(vals,haciaInf){
+ const v=vals.filter(x=>x!==null&&Number.isFinite(x));
+ const n=v.length;
+ if(!n)return {k:'?'};
+ const last=v[n-1];
+ if(Math.abs(last)>1e7)return {k:'inf',v:Math.sign(last)};
+ if(Math.abs(last)>1e4&&Math.abs(last)>10*Math.abs(v[0])+1)return {k:'inf',v:Math.sign(last)};
+ if(n>=4){
+  const d1=v[1]-v[0],dl=v[n-1]-v[n-2];
+  if(Math.abs(dl)>1e-3&&Math.abs(dl)>0.25*Math.abs(d1)&&Math.sign(dl)===Math.sign(d1))return {k:'inf',v:Math.sign(dl)};
+ }
+ if(haciaInf&&Math.abs(last)<1e-6&&(n<2||Math.abs(last)<Math.abs(v[0])/10))return {k:'val',v:0};
+ return {k:'val',v:last};
+}
+function infBehavior(node,dir){
+ const c=classifySeq([1e2,1e3,1e4,1e5,1e6,1e7,1e8].map(x=>limEval(node,dir*x)),true);
+ if(c.k==='inf')return 'inf';
+ if(c.k==='val')return Math.abs(c.v)<1e-9?'zero':'finite';
+ return '?';
+}
+
+/* --- comprobación numérica --- */
+function limitNumeric(node,tgt){
+ if(tgt.inf){
+  const big=tgt.inf>0?1:-1;
+  return classifySeq([1e2,1e3,1e4,1e5,1e6,1e7,1e8].map(x=>limEval(node,big*x)),true);
+ }
+ const a=tgt.a,hs=[1e-2,1e-3,1e-4,1e-5,1e-6];
+ const cl=classifySeq(hs.map(h=>limEval(node,a-h))),cr=classifySeq(hs.map(h=>limEval(node,a+h)));
+ if(tgt.side<0)return cl;
+ if(tgt.side>0)return cr;
+ if(cl.k==='?'&&cr.k==='?')return {k:'?'};
+ if(cl.k==='?')return cr;
+ if(cr.k==='?')return cl;
+ if(cl.k!==cr.k)return {k:'dne'};
+ if(cl.k==='inf')return cl.v===cr.v?cl:{k:'dne'};
+ if(Math.abs(cl.v-cr.v)>1e-3*(1+Math.abs(cl.v)))return {k:'dne'};
+ return {k:'val',v:(cl.v+cr.v)/2};
+}
+
+/* --- interfaz --- */
+function solveLimit(){
+ const rawF=$('limitExpr').value,expr=normalizeExpr(rawF),rawA=$('limitPoint').value;
+ if(!expr)return mathError('Escribe la función f(x).');
+ const tgt=parseLimitTarget(rawA);
+ if(!tgt)return mathError('Indica a dónde tiende x: un número, una expresión como pi/2, o ∞ / −∞. Puedes añadir ⁻ o ⁺ para un límite lateral.');
+ let ast;
+ try{ast=ME.simplify(ME.parse(expr))}catch(e){return mathError('No se pudo leer la función: '+e.message)}
+ const steps=[];
+ let res=null;
+ try{res=limitCore(ast,tgt,steps,0)}catch(e){res=null}
+ const chk=limitNumeric(ast,tgt);
+ /* si el álgebra no concluye o contradice a la comprobación, manda la evidencia numérica */
+ let nota='';
+ const rn=resultNum(res);
+ const agree=(()=>{
+  if(!res||chk.k==='?')return false;
+  if(res.k==='inf')return chk.k==='inf'&&chk.v===res.sg;
+  if(res.k==='dne')return chk.k==='dne';
+  return chk.k==='val'&&(Math.abs(rn-chk.v)<5e-3*(1+Math.abs(chk.v))||Math.abs(rn-chk.v)<1e-3);
+ })();
+ if(!res||!agree){
+  if(chk.k==='val'){
+   res=LV(exactNum(Math.abs(chk.v-Math.round(chk.v))<1e-7?Math.round(chk.v):Number(chk.v.toPrecision(9))));
+   nota=res&&steps.length?'El desarrollo algebraico no pudo cerrarse por completo, así que el valor mostrado proviene del análisis del comportamiento de la función alrededor del punto.':'';
+   if(!steps.length)steps.push({t:'Análisis del comportamiento',d:'La expresión no se pudo resolver con las técnicas algebraicas implementadas, así que se estudió el comportamiento de la función acercándose al punto por ambos lados.'});
+  }else if(chk.k==='inf'){res=LI(chk.v);if(!steps.length)steps.push({t:'Crecimiento sin cota',d:'Los valores de la función crecen sin límite al acercarse al punto.'})}
+  else if(chk.k==='dne'){res=LD('los límites laterales no coinciden');if(!steps.length)steps.push({t:'Límites laterales distintos',d:'La función se aproxima a valores diferentes por la izquierda y por la derecha.'})}
+  else if(!res)return mathError('No fue posible evaluar la función cerca de ese punto. Revisa el dominio de la expresión.');
+ }
+ const head=resultText(res)+(res.k==='dne'&&res.why?'':'');
+ const fs=ME.show(ast);
+ const lado=tgt.side<0?' por la izquierda':tgt.side>0?' por la derecha':'';
+ const props=propsList(ast);
+ const stepsHTML=[{t:'Expresión',d:`lím<sub>x → ${esc(tgt.label)}</sub> [ ${esc(fs)} ]${lado?'<br><span class="muted">Límite lateral'+lado+'.</span>':''}`}]
+  .concat(steps)
+  .concat([{t:'Propiedades aplicadas',d:'Se usaron: '+props.join('; ')+'.'}])
+  .concat([{t:'Resultado',d:`<b>${esc(resultText(res))}</b>${res.k==='dne'&&res.why?'<br><span class="muted">'+esc(res.why)+'.</span>':''}${nota?'<br><span class="muted">'+esc(nota)+'</span>':''}`}]);
+ $('mathResult').innerHTML=`<div class="result"><strong>${esc(resultText(res))}</strong><div class="steps">lím x → ${esc(tgt.label)} de <b>${esc(fs)}</b></div><div class="procedure"><h4>Desarrollo del límite</h4>`+
+  stepsHTML.map((st,i)=>`<div class="procedure-step"><span class="stepnum">${i+1}</span><div><b>${st.t}</b><br>${st.d}</div></div>`).join('')+
+  `</div></div>`;
+ addHistory('math',{label:'Límite',value:`lím x→${tgt.label} ${fs} = ${resultText(res)}`,
+  restore:{route:['math','limit'],fields:{limitExpr:rawF,limitPoint:rawA}}});
+}
+
+/* ===================== TECLADO MATEMÁTICO ===================== */
+let mathKbTab='num',mathKbEl=null,mathKbOpen=true;
+const K=(l,i,b,c)=>({l:l,i:i,b:b||0,c:c||''});
+const KA=(l,a)=>({l:l,a:a});
+const MATH_KB={
+ num:{cols:6,keys:[
+  K('7','7'),K('8','8'),K('9','9'),K('(','(','', 'op'),K(')',')','','op'),KA('⌫','BK'),
+  K('4','4'),K('5','5'),K('6','6'),K('+','+','','op'),K('−','-','','op'),KA('C','CL'),
+  K('1','1'),K('2','2'),K('3','3'),K('×','*','','op'),K('÷','/','','op'),KA('◀','LT'),
+  K('0','0'),K('.','.'),K('x','x','','op'),K('^','^','','op'),K('√','sqrt()',1,'op'),KA('▶','RT'),
+  K('∞','inf','','op'),K('−∞','-inf','','op'),K('a⁻','⁻','','op'),K('a⁺','⁺','','op'),K('π','pi','','op'),K('e','e','','op')
+ ]},
+ fn:{cols:4,keys:[
+  K('sen','sen()',1,'fn'),K('cos','cos()',1,'fn'),K('tan','tan()',1,'fn'),K('π','pi','','op'),
+  K('sec','sec()',1,'fn'),K('csc','csc()',1,'fn'),K('cot','cot()',1,'fn'),K('e','e','','op'),
+  K('asen','asen()',1,'fn'),K('acos','acos()',1,'fn'),K('atan','atan()',1,'fn'),K('°','°','','op'),
+  K('senh','senh()',1,'fn'),K('cosh','cosh()',1,'fn'),K('tanh','tanh()',1,'fn'),K('x','x','','op'),
+  K('ln','ln()',1,'fn'),K('log₁₀','log10()',1,'fn'),K('exp','exp()',1,'fn'),K('|x|','abs()',1,'fn'),
+  K('√','sqrt()',1,'fn'),K('∛','cbrt()',1,'fn'),K('^','^','','op'),K('∞','inf','','op')
+ ]},
+ abc:{cols:7,keys:'abcdefghijklmnopqrstuvwxyz'.split('').map(ch=>K(ch,ch)).concat([KA('⌫','BK'),KA('C','CL')])}
+};
+const MATH_KB_NOTE='En Límites, <b>∞</b> y <b>−∞</b> van en el campo «<b>x tiende a</b>», y <b>a⁻</b> / <b>a⁺</b> piden el límite por la izquierda o por la derecha. La única variable es <b>x</b>; las demás letras sirven para escribir nombres de funciones. Las trigonométricas usan <b>radianes</b>: escribe <b>sen(pi/6)</b>, o usa la tecla <b>°</b> para grados, como <b>sen(30°)</b>.';
+function mathKbTargetEl(){
+ const box=$('mathForm');if(!box)return null;
+ if(mathKbEl&&box.contains(mathKbEl)&&!mathKbEl.disabled)return mathKbEl;
+ return box.querySelector('input[data-mk]');
+}
+function mathKbIns(txt,back){
+ const el=mathKbTargetEl();if(!el)return;
+ const v=el.value==null?'':String(el.value);
+ let a=v.length,b=v.length;
+ try{if(el.selectionStart!==null&&el.selectionStart!==undefined){a=el.selectionStart;b=el.selectionEnd}}catch(_){}
+ el.value=v.slice(0,a)+txt+v.slice(b);
+ const pos=a+txt.length-(back||0);
+ el.focus();
+ try{el.setSelectionRange(pos,pos)}catch(_){}
+ el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function mathKbAct(a){
+ const el=mathKbTargetEl();if(!el)return;
+ const v=el.value==null?'':String(el.value);
+ let s=v.length,e=v.length;
+ try{if(el.selectionStart!==null&&el.selectionStart!==undefined){s=el.selectionStart;e=el.selectionEnd}}catch(_){}
+ if(a==='CL'){el.value='';el.focus();try{el.setSelectionRange(0,0)}catch(_){}}
+ else if(a==='BK'){
+  if(s!==e){el.value=v.slice(0,s)+v.slice(e)}
+  else if(s>0){el.value=v.slice(0,s-1)+v.slice(s);s--}
+  el.focus();try{el.setSelectionRange(s,s)}catch(_){}
+ }
+ else if(a==='LT'){const p=Math.max(0,s-1);el.focus();try{el.setSelectionRange(p,p)}catch(_){}}
+ else if(a==='RT'){const p=Math.min(v.length,e+1);el.focus();try{el.setSelectionRange(p,p)}catch(_){}}
+ el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function mathKbSet(t){mathKbTab=t;renderMathKeyboard()}
+function mathKbToggle(){mathKbOpen=!mathKbOpen;renderMathKeyboard()}
+function mathKeyHTML(k){
+ if(k.a)return `<button type="button" class="kbkey act" onmousedown="event.preventDefault()" onclick="mathKbAct('${k.a}')">${k.l}</button>`;
+ const ins=String(k.i).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+ return `<button type="button" class="kbkey ${k.c}" onmousedown="event.preventDefault()" onclick="mathKbIns('${ins}',${k.b})">${k.l}</button>`;
+}
+function renderMathKeyboard(){
+ const wrap=$('mathKbWrap');if(!wrap)return;
+ const tabs=[['num','123'],['fn','ƒ(x)'],['abc','ABC']];
+ const g=MATH_KB[mathKbTab]||MATH_KB.num;
+ wrap.innerHTML=`<div class="mathkb"><div class="mathkb-head"><span class="mathkb-title">Teclado matemático</span><div class="mathkb-tabs">`+
+  tabs.map(t=>`<button type="button" class="kbtab ${mathKbTab===t[0]?'active':''}" onmousedown="event.preventDefault()" onclick="mathKbSet('${t[0]}')">${t[1]}</button>`).join('')+
+  `<button type="button" class="kbtab" onmousedown="event.preventDefault()" onclick="mathKbToggle()">${mathKbOpen?'Ocultar':'Mostrar'}</button></div></div>`+
+  (mathKbOpen?`<div class="mathkb-body"><div class="kbgrid" style="--kbc:${g.cols}">${g.keys.map(mathKeyHTML).join('')}</div><div class="kbnote">${MATH_KB_NOTE}</div></div>`:'')+
+  `</div>`;
+}
+function attachMathKeyboard(){
+ const box=$('mathForm');if(!box)return;
+ if(!box.querySelector('#mathKbWrap')){
+  const anchor=box.querySelector('#mathResult');
+  if(anchor)anchor.insertAdjacentHTML('beforebegin','<div id="mathKbWrap"></div>');
+  else box.insertAdjacentHTML('beforeend','<div id="mathKbWrap"></div>');
+ }
+ mathKbEl=null;
+ if(!box._mkBound){
+  box.addEventListener('focusin',e=>{const t=e.target;if(t&&t.matches&&t.matches('input[data-mk]'))mathKbEl=t});
+  box._mkBound=1;
+ }
+ renderMathKeyboard();
+ if(typeof attachCamera==='function')attachCamera('math');
+}
+
+/* ===================== CÁMARA Y RECONOCIMIENTO DE TEXTO ===================== */
+const photoState={math:{src:null,text:'',busy:false,msg:'',zoom:false},physics:{src:null,text:'',busy:false,msg:'',zoom:false}};
+const cameraOpen={math:false,physics:false};
+const TESS_URL='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+
+function camToggle(tool){cameraOpen[tool]=!cameraOpen[tool];renderCamera(tool)}
+function camPick(tool){const i=$('camInput_'+tool);if(i){i.value='';i.click()}}
+function camZoom(tool){photoState[tool].zoom=!photoState[tool].zoom;renderCamera(tool)}
+function camClear(tool){photoState[tool]={src:null,text:'',busy:false,msg:'',zoom:false};renderCamera(tool)}
+function camLoad(tool,input){
+ const f=input.files&&input.files[0];if(!f)return;
+ if(!/^image\//.test(f.type))return toast('Ese archivo no es una imagen.');
+ const rd=new FileReader();
+ rd.onload=()=>{
+  const img=new Image();
+  img.onload=()=>{
+   const max=1600;let w=img.width,h=img.height;
+   if(Math.max(w,h)>max){const k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}
+   const c=document.createElement('canvas');c.width=w;c.height=h;
+   c.getContext('2d').drawImage(img,0,0,w,h);
+   let src;try{src=c.toDataURL('image/jpeg',0.86)}catch(_){src=rd.result}
+   photoState[tool]={src:src,text:'',busy:false,msg:'',zoom:false};
+   cameraOpen[tool]=true;renderCamera(tool);
+  };
+  img.onerror=()=>{photoState[tool]={src:rd.result,text:'',busy:false,msg:'',zoom:false};cameraOpen[tool]=true;renderCamera(tool)};
+  img.src=rd.result;
+ };
+ rd.onerror=()=>toast('No se pudo leer la imagen.');
+ rd.readAsDataURL(f);
+}
+function loadTesseract(){
+ if(window.Tesseract)return Promise.resolve();
+ if(window._tessPromise)return window._tessPromise;
+ window._tessPromise=new Promise((res,rej)=>{
+  const sc=document.createElement('script');
+  sc.src=TESS_URL;
+  sc.onload=()=>res();
+  sc.onerror=()=>{window._tessPromise=null;rej(new Error('no se pudo descargar el reconocedor'))};
+  document.head.appendChild(sc);
+ });
+ return window._tessPromise;
+}
+function ocrClean(t,tool){
+ let s=String(t||'');
+ if(tool!=='math')return s.replace(/[ \t]+/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+ s=s.replace(/\r/g,'').split('\n').map(l=>l.trim()).filter(Boolean).join(' ');
+ return s
+  .replace(/[×✕✖]/g,'*').replace(/[÷]/g,'/').replace(/[−–—]/g,'-')
+  .replace(/[{\[]/g,'(').replace(/[}\]]/g,')')
+  .replace(/^\s*(?:f\s*\(\s*x\s*\)|y)\s*=\s*/i,'')
+  .replace(/\s+/g,'')
+  .replace(/,/g,'.');
+}
+function camOCR(tool){
+ const st=photoState[tool];
+ if(!st.src)return toast('Primero toma o elige una foto.');
+ st.busy=true;st.msg='Descargando el reconocedor…';renderCamera(tool);
+ loadTesseract()
+  .then(()=>{
+   st.msg='Leyendo la imagen… 0%';renderCamera(tool);
+   return window.Tesseract.recognize(st.src,'eng',{logger:m=>{
+    if(m.status==='recognizing text'){st.msg='Leyendo la imagen… '+Math.round((m.progress||0)*100)+'%';renderCamera(tool)}
+   }});
+  })
+  .then(r=>{
+   st.busy=false;st.msg='';
+   st.text=ocrClean(r&&r.data?r.data.text:'',tool);
+   if(!st.text)st.msg='No se reconoció texto legible. Prueba con más luz, encuadrando solo el ejercicio.';
+   renderCamera(tool);
+  })
+  .catch(e=>{
+   st.busy=false;
+   st.msg='No se pudo reconocer el texto ('+(e&&e.message?e.message:'error')+'). Necesitas conexión a internet la primera vez.';
+   renderCamera(tool);
+  });
+}
+function camUse(tool){
+ const ta=$('camText_'+tool);if(!ta)return;
+ const txt=String(ta.value||'').trim();
+ if(!txt)return toast('No hay texto que usar.');
+ const el=typeof mathKbTargetEl==='function'?mathKbTargetEl():null;
+ if(!el)return toast('Selecciona primero el campo donde quieres el texto.');
+ el.value=txt;el.focus();
+ toast('Texto colocado en el campo. Revísalo antes de calcular.');
+}
+function renderCamera(tool){
+ const wrap=$('cam_'+tool);if(!wrap)return;
+ const st=photoState[tool],open=cameraOpen[tool];
+ let body='';
+ if(open){
+  body='<div class="cam-body">';
+  if(!st.src){
+   body+='<div class="cam-drop"><div class="cam-ico">📷</div><div>Toma una foto del ejercicio o elige una imagen de la galería. Queda a la vista mientras resuelves.</div>'+
+    `<button type="button" class="btn primary" onclick="camPick('${tool}')">Tomar foto o elegir imagen</button></div>`;
+  }else{
+   body+=`<img class="cam-img${st.zoom?' zoom':''}" src="${st.src}" alt="Foto del ejercicio" onclick="camZoom('${tool}')">`;
+   body+=`<div class="cam-row"><button type="button" class="btn" onclick="camPick('${tool}')">Otra foto</button>`+
+    `<button type="button" class="btn" onclick="camOCR('${tool}')"${st.busy?' disabled':''}>${st.busy?'Leyendo…':'Reconocer texto'}</button>`+
+    `<button type="button" class="btn danger" onclick="camClear('${tool}')">Quitar</button></div>`;
+   if(st.msg)body+=`<div class="cam-msg">${esc(st.msg)}</div>`;
+   if(st.text){
+    body+=`<label style="margin-top:12px">Texto reconocido (revísalo y corrígelo)<textarea id="camText_${tool}" class="cam-text" rows="${tool==='math'?2:5}">${esc(st.text)}</textarea></label>`;
+    if(tool==='math')body+=`<div class="cam-row"><button type="button" class="btn primary" onclick="camUse('math')">Usar en el campo seleccionado</button></div>`;
+   }
+   body+='<div class="cam-note">El reconocimiento funciona razonablemente con texto impreso y nítido. Con letra a mano, potencias o fracciones suele equivocarse, así que <b>revisa siempre</b> lo que escribió antes de calcular.</div>';
+  }
+  body+='</div>';
+ }
+ wrap.innerHTML=`<div class="cam"><div class="cam-head"><span class="cam-title">Foto del ejercicio</span>`+
+  `<div class="cam-tabs">${st.src&&!open?'<span class="cam-badge">1 foto</span>':''}`+
+  `<button type="button" class="kbtab" onclick="camToggle('${tool}')">${open?'Ocultar':'Abrir cámara'}</button></div></div>${body}</div>`+
+  `<input type="file" accept="image/*" capture="environment" id="camInput_${tool}" style="display:none" onchange="camLoad('${tool}',this)">`;
+}
+function attachCamera(tool){
+ const host=$(tool==='math'?'mathForm':'physicsForm');
+ if(!host)return;
+ if(!host.querySelector('#cam_'+tool)){
+  const anchor=host.querySelector('#mathResult');
+  const html=`<div id="cam_${tool}"></div>`;
+  if(anchor)anchor.insertAdjacentHTML('beforebegin',html);
+  else host.insertAdjacentHTML('beforeend',html);
+ }
+ renderCamera(tool);
+}
+
+const physicsDefs={
+ kinematics:{
+  title:'Cinemática',
+  tools:[
+   {id:'mruV',n:'MRU · Velocidad',fields:[['d','Distancia','m'],['t','Tiempo','s']],calc:v=>({r:v.d/v.t,formula:'v = d ÷ t',sub:`v = ${v.d} ÷ ${v.t}`,logic:'Dividimos la distancia recorrida entre el tiempo empleado.',unit:'m/s'})},
+   {id:'mruD',n:'MRU · Distancia',fields:[['v','Velocidad','m/s'],['t','Tiempo','s']],calc:v=>({r:v.v*v.t,formula:'d = v × t',sub:`d = ${v.v} × ${v.t}`,logic:'Multiplicamos la velocidad por el tiempo.',unit:'m'})},
+   {id:'mruT',n:'MRU · Tiempo',fields:[['d','Distancia','m'],['v','Velocidad','m/s']],calc:v=>({r:v.d/v.v,formula:'t = d ÷ v',sub:`t = ${v.d} ÷ ${v.v}`,logic:'Dividimos la distancia entre la velocidad.',unit:'s'})},
+   {id:'mruvA','n':'MRUV · Aceleración',fields:[['vf','Velocidad final','m/s'],['vi','Velocidad inicial','m/s'],['t','Tiempo','s']],calc:v=>({r:(v.vf-v.vi)/v.t,formula:'a = (vf − vi) ÷ t',sub:`a = (${v.vf} − ${v.vi}) ÷ ${v.t}`,logic:'Restamos la velocidad inicial a la final y dividimos entre el tiempo.',unit:'m/s²'})},
+   {id:'mruvV','n':'MRUV · Velocidad final',fields:[['vi','Velocidad inicial','m/s'],['a','Aceleración','m/s²'],['t','Tiempo','s']],calc:v=>({r:v.vi+v.a*v.t,formula:'vf = vi + a·t',sub:`vf = ${v.vi} + (${v.a} × ${v.t})`,logic:'Sumamos a la velocidad inicial el producto de aceleración por tiempo.',unit:'m/s'})},
+   {id:'mruvD','n':'MRUV · Distancia',fields:[['vi','Velocidad inicial','m/s'],['a','Aceleración','m/s²'],['t','Tiempo','s']],calc:v=>({r:v.vi*v.t+.5*v.a*v.t**2,formula:'d = vi·t + ½·a·t²',sub:`d = ${v.vi}(${v.t}) + ½(${v.a})(${v.t})²`,logic:'Calculamos el desplazamiento inicial y sumamos el término de aceleración.',unit:'m'})}
+  ]},
+ dynamics:{title:'Dinámica y Leyes de Newton',tools:[
+  {id:'force',n:'Fuerza',fields:[['m','Masa','kg'],['a','Aceleración','m/s²']],calc:v=>({r:v.m*v.a,formula:'F = m·a',sub:`F = ${v.m} × ${v.a}`,logic:'Aplicamos la segunda ley de Newton multiplicando masa por aceleración.',unit:'N'})},
+  {id:'mass',n:'Masa',fields:[['F','Fuerza','N'],['a','Aceleración','m/s²']],calc:v=>({r:v.F/v.a,formula:'m = F ÷ a',sub:`m = ${v.F} ÷ ${v.a}`,logic:'Despejamos la masa dividiendo la fuerza entre la aceleración.',unit:'kg'})},
+  {id:'accel',n:'Aceleración',fields:[['F','Fuerza','N'],['m','Masa','kg']],calc:v=>({r:v.F/v.m,formula:'a = F ÷ m',sub:`a = ${v.F} ÷ ${v.m}`,logic:'Despejamos la aceleración dividiendo la fuerza entre la masa.',unit:'m/s²'})},
+  {id:'weight',n:'Peso',fields:[['m','Masa','kg'],['g','Gravedad','m/s²']],calc:v=>({r:v.m*v.g,formula:'P = m·g',sub:`P = ${v.m} × ${v.g}`,logic:'Multiplicamos la masa por la aceleración gravitatoria.',unit:'N'})}
+ ]},
+ circuits:{title:'Circuitos eléctricos',tools:[
+  {id:'series',n:'Circuito serie',custom:'series'},
+  {id:'parallel',n:'Circuito paralelo',custom:'parallel'},
+  {id:'ohm',n:'Ley de Ohm',custom:'ohm'},
+  {id:'kirchhoffLoop',n:'Kirchhoff · Malla básica',custom:'loop'},
+  {id:'kirchhoffNode',n:'Kirchhoff · Nodo básico',custom:'node'}
+ ]}
+};
+const physicsFormulas={mruV:'v = d ÷ t',mruD:'d = v × t',mruT:'t = d ÷ v',mruvA:'a = (vf − vi) ÷ t',mruvV:'vf = vi + a·t',mruvD:'d = vi·t + ½·a·t²',force:'F = m·a',mass:'m = F ÷ a',accel:'a = F ÷ m',weight:'P = m·g',series:'Req = R1 + R2 + …',parallel:'1/Req = 1/R1 + 1/R2 + …',ohm:'V = I·R',kirchhoffLoop:'ΣV = 0',kirchhoffNode:'ΣI entran = ΣI salen'};
+Object.values(physicsDefs).forEach(c=>c.tools.forEach(t=>{t.f=physicsFormulas[t.id]||''}));
+const selectedPhysics={kinematics:0,dynamics:0,circuits:0};
+
+/* ===================== FÍSICA ===================== */
+function nf(v){
+ if(!Number.isFinite(v))return String(v);
+ if(Number.isInteger(v))return String(v);
+ let s=String(Number(v.toPrecision(10)));
+ if(s.indexOf('e')<0&&s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');
+ return s;
+}
+function fieldNum(id){const el=$(id);if(!el)return NaN;const s=String(el.value).trim();if(s==='')return NaN;const v=Number(s);return Number.isFinite(v)?v:NaN}
+function fieldEmpty(id){const el=$(id);return !el||String(el.value).trim()===''}
+function renderPhysicsPanel(){
+ const category=physicsDefs[selected.physics];
+ const idx=Math.min(selectedPhysics[selected.physics]||0,category.tools.length-1);
+ const tool=category.tools[idx];
+ $('physicsForm').innerHTML='<div id="physicsCalcForm"></div>';
+ if(tool.custom)renderCircuitCustom(tool.custom);else renderPhysicsStandard(tool);
+ if(typeof attachCamera==='function')attachCamera('physics');
+}
+function renderPhysicsStandard(tool){
+ const f=$('physicsCalcForm');
+ f.innerHTML=`<div class="stack"><div class="mini-note">Fórmula: <span class="formula-chip">${tool.f||''}</span> · Completa todas las variables con las unidades indicadas.</div><div class="formgrid">${tool.fields.map(fl=>inputField('phy_'+fl[0],`${fl[1]} (${fl[2]})`,{placeholder:'Ingresa un valor',help:`Variable requerida: ${fl[1]} en ${fl[2]}.`})).join('')}</div><div class="actions"><button class="btn primary" onclick="runPhysicsStandard()">Calcular</button></div><div id="physicsResult"></div><div id="physicsHistory"></div></div>`;
+ f.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();runPhysicsStandard()}};
+ renderHistory('physics');
+ window._activePhysicsTool=tool;
+}
+function runPhysicsStandard(){
+ const tool=window._activePhysicsTool,v={};
+ for(const fl of tool.fields){
+  const k=fl[0];v[k]=fieldNum('phy_'+k);
+  if(!Number.isFinite(v[k]))return physicsError('Completa todas las variables solicitadas con valores numéricos.');
+  if(k==='t'&&v[k]===0)return physicsError('El tiempo no puede ser 0.');
+  if((k==='v'||k==='m')&&v[k]===0&&['mruT','accel'].includes(tool.id))return physicsError('La variable utilizada como divisor no puede ser 0.');
+ }
+ const o=tool.calc(v);
+ const fields={};tool.fields.forEach(fl=>{const el=$('phy_'+fl[0]);if(el)fields['phy_'+fl[0]]=el.value});
+ renderPhysicsResult(nf(o.r)+(o.unit?' '+o.unit:''),o.formula,o.sub,o.logic,tool.n,'',{route:['physics',selected.physics,tool.id],fields:fields});
+}
+function renderPhysicsResult(result,formula,sub,logic,label,extra,restore){$('physicsResult').innerHTML=`<div class="result"><strong>${result}</strong>${extra||''}<div class="procedure"><h4>Procedimiento físico paso a paso</h4><div class="procedure-step"><span class="stepnum">1</span><div><b>Fórmula</b><br>${formula}</div></div><div class="procedure-step"><span class="stepnum">2</span><div><b>Sustitución</b><br>${sub}</div></div><div class="procedure-step"><span class="stepnum">3</span><div><b>Despeje / operación física</b><br>${logic}</div></div><div class="procedure-step"><span class="stepnum">4</span><div><b>Resultado</b><br>${result}</div></div></div></div>`;addHistory('physics',{label,value:result,restore})}
+function physicsError(msg){const el=$('physicsResult');if(el)el.innerHTML=`<div class="result error">${esc(msg)}</div>`}
+function renderCircuitCustom(kind){
+ const f=$('physicsCalcForm');
+ if(kind==='series'||kind==='parallel'){
+  if(!Array.isArray(window.circuitResistors)||window.circuitResistors.length<2)window.circuitResistors=['10','20'];
+  const nombre=kind==='series'?'serie':'paralelo';
+  f.innerHTML=`<div class="stack"><div class="mini-note">Agrega tantas resistencias como tenga el circuito (mínimo dos) y escribe su valor en ohmios. La <b>fuente es opcional</b>: si la indicas, también se calcula la corriente y el reparto de ${kind==='series'?'voltaje':'corriente'}.</div><div class="resistor-list" id="resistorList"></div><div class="actions"><button class="btn" onclick="addResistor()">+ Agregar resistencia</button></div><div class="formgrid"><label>Fuente V (opcional)<input id="circuitVoltage" type="number" step="any" placeholder="Ej. 12"><span class="field-help">Déjala vacía si solo necesitas la resistencia equivalente.</span></label></div><div class="actions"><button class="btn primary" onclick="solveCircuit('${kind}')">Calcular circuito ${nombre}</button></div><div id="physicsResult"></div><div id="physicsHistory"></div></div>`;
+  renderResistors();renderHistory('physics');
+  f.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();solveCircuit(kind)}};
+ }else if(kind==='ohm'){
+  f.innerHTML=`<div class="stack"><div class="mini-note">Ley de Ohm: <span class="formula-chip">V = I · R</span> Rellena <b>dos</b> magnitudes y <b>deja vacía</b> la que quieres calcular.</div><div class="formgrid three"><label>Voltaje V (V)<input id="ohmV" type="number" step="any" placeholder="Déjalo vacío para calcularlo"></label><label>Corriente I (A)<input id="ohmI" type="number" step="any" placeholder="Déjalo vacío para calcularla"></label><label>Resistencia R (Ω)<input id="ohmR" type="number" step="any" placeholder="Déjalo vacío para calcularla"></label></div><div class="actions"><button class="btn primary" onclick="solveOhm()">Resolver Ley de Ohm</button></div><div id="physicsResult"></div><div id="physicsHistory"></div></div>`;
+  renderHistory('physics');
+  f.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();solveOhm()}};
+ }else if(kind==='loop'){
+  f.innerHTML=`<div class="stack"><div class="mini-note">Malla de una sola trayectoria: <span class="formula-chip">ΣV = 0</span> es decir <b>Vs = V1 + V2 + V3</b>.<br>Deja <b>vacío únicamente el valor que quieres hallar</b>. Si la malla solo tiene dos caídas, escribe 0 en V3. Si los llenas todos, se comprueba si la malla está balanceada.</div><div class="formgrid"><label>Fuente Vs (V)<input id="kVs" type="number" step="any" placeholder="Ej. 12"></label><label>Caída V1 (V)<input id="kV1" type="number" step="any" placeholder="Ej. 5"></label><label>Caída V2 (V)<input id="kV2" type="number" step="any" placeholder="Ej. 3"></label><label>Caída V3 (V)<input id="kV3" type="number" step="any" placeholder="Ej. 0"></label></div><div class="actions"><button class="btn primary" onclick="solveKirchhoffLoop()">Resolver malla</button></div><div id="physicsResult"></div><div id="physicsHistory"></div></div>`;
+  renderHistory('physics');
+  f.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();solveKirchhoffLoop()}};
+ }else{
+  f.innerHTML=`<div class="stack"><div class="mini-note">Nodo: <span class="formula-chip">ΣI entran = ΣI salen</span><br>Deja <b>vacía la corriente que quieres hallar</b>. Si llenas las tres, se calcula la corriente de salida que falta para equilibrar el nodo.</div><div class="formgrid three"><label>I1 entra (A)<input id="knI1" type="number" step="any" placeholder="Ej. 5"></label><label>I2 entra (A)<input id="knI2" type="number" step="any" placeholder="Ej. 2"></label><label>I3 sale (A)<input id="knI3" type="number" step="any" placeholder="Ej. 3"></label></div><div class="actions"><button class="btn primary" onclick="solveKirchhoffNode()">Resolver nodo</button></div><div id="physicsResult"></div><div id="physicsHistory"></div></div>`;
+  renderHistory('physics');
+  f.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();solveKirchhoffNode()}};
+ }
+}
+function renderResistors(){
+ const el=$('resistorList');if(!el)return;
+ const lock=window.circuitResistors.length<=2;
+ el.innerHTML=window.circuitResistors.map((r,i)=>`<div class="resistor-row"><label>R${i+1} (Ω)<input type="number" min="0" step="any" value="${esc(r)}" oninput="window.circuitResistors[${i}]=this.value"></label><button class="btn danger" title="Quitar R${i+1}" ${lock?'disabled':''} onclick="removeResistorAt(${i})">✕</button></div>`).join('');
+}
+function addResistor(){if(!Array.isArray(window.circuitResistors))window.circuitResistors=['10','20'];window.circuitResistors.push('10');renderResistors()}
+function removeResistorAt(i){if(window.circuitResistors.length<=2)return toast('Un circuito requiere al menos dos resistencias.');window.circuitResistors.splice(i,1);renderResistors()}
+function removeResistor(){removeResistorAt(window.circuitResistors.length-1)}
+function solveCircuit(kind){
+ const raw=window.circuitResistors||[],vals=[];
+ if(raw.length<2)return physicsError('Agrega al menos dos resistencias.');
+ for(let i=0;i<raw.length;i++){
+  const s=String(raw[i]).trim(),n=s===''?NaN:Number(s);
+  if(!Number.isFinite(n)||n<=0)return physicsError(`R${i+1} debe ser un número mayor que 0.`);
+  vals.push(n);
+ }
+ const hasV=!fieldEmpty('circuitVoltage'),V=fieldNum('circuitVoltage');
+ if(hasV&&!Number.isFinite(V))return physicsError('La fuente debe ser un número válido o quedar vacía.');
+ let req,formula,sub,logic,extra='';
+ if(kind==='series'){
+  req=vals.reduce((a,b)=>a+b,0);
+  formula='Req = R1 + R2 + … + Rn';
+  sub=`Req = ${vals.map(nf).join(' + ')} = ${nf(req)} Ω`;
+  logic='En un circuito serie la corriente es la misma en todos los elementos, por lo que las resistencias se suman directamente.';
+  if(hasV){
+   const I=V/req,drops=vals.map(r=>I*r);
+   extra=`<div class="steps"><b>Con una fuente de ${nf(V)} V:</b><br>I = V ÷ Req = ${nf(V)} ÷ ${nf(req)} = <b>${nf(I)} A</b> (la misma en todas las resistencias)<br>${vals.map((r,i)=>`V${i+1} = I · R${i+1} = ${nf(I)} × ${nf(r)} = ${nf(drops[i])} V`).join('<br>')}<br>Comprobación: ΣV = ${nf(drops.reduce((a,b)=>a+b,0))} V, igual a la fuente.</div>`;
+  }
+ }else{
+  const sumG=vals.reduce((a,b)=>a+1/b,0);
+  req=1/sumG;
+  formula='1/Req = 1/R1 + 1/R2 + … + 1/Rn';
+  sub=`1/Req = ${vals.map(r=>'1/'+nf(r)).join(' + ')} = ${nf(sumG)} → Req = 1 ÷ ${nf(sumG)} = ${nf(req)} Ω`;
+  logic='En paralelo todas las ramas comparten el mismo voltaje; se suman las conductancias (1/R) y se invierte el total para obtener la resistencia equivalente.';
+  if(hasV){
+   const branch=vals.map(r=>V/r),It=branch.reduce((a,b)=>a+b,0);
+   extra=`<div class="steps"><b>Con una fuente de ${nf(V)} V:</b><br>Cada rama recibe los mismos ${nf(V)} V<br>${vals.map((r,i)=>`I${i+1} = V ÷ R${i+1} = ${nf(V)} ÷ ${nf(r)} = ${nf(branch[i])} A`).join('<br>')}<br>Corriente total: I = ΣI = <b>${nf(It)} A</b><br>Comprobación: V ÷ Req = ${nf(V/req)} A.</div>`;
+  }
+ }
+ renderPhysicsResult(`Req = ${nf(req)} Ω`,formula,sub,logic,kind==='series'?'Circuito serie':'Circuito paralelo',extra,{route:['physics','circuits',kind],fields:{circuitVoltage:$('circuitVoltage').value},resistors:(window.circuitResistors||[]).map(String)});
+}
+function solveOhm(){
+ const V=fieldNum('ohmV'),I=fieldNum('ohmI'),R=fieldNum('ohmR');
+ const dados=[V,I,R].filter(Number.isFinite).length;
+ if(dados!==2)return physicsError('Ingresa exactamente dos magnitudes y deja vacía la tercera (la que quieres calcular).');
+ let result,formula,sub,logic,label,unit;
+ if(!Number.isFinite(V)){
+  result=I*R;formula='V = I · R';sub=`V = ${nf(I)} × ${nf(R)}`;logic='Multiplicamos la corriente por la resistencia para obtener la caída de tensión.';label='Ley de Ohm · Voltaje';unit='V';
+ }else if(!Number.isFinite(I)){
+  if(R===0)return physicsError('La resistencia no puede ser 0 al despejar la corriente.');
+  result=V/R;formula='I = V ÷ R';sub=`I = ${nf(V)} ÷ ${nf(R)}`;logic='Despejamos la corriente dividiendo el voltaje entre la resistencia.';label='Ley de Ohm · Corriente';unit='A';
+ }else{
+  if(I===0)return physicsError('La corriente no puede ser 0 al despejar la resistencia.');
+  result=V/I;formula='R = V ÷ I';sub=`R = ${nf(V)} ÷ ${nf(I)}`;logic='Despejamos la resistencia dividiendo el voltaje entre la corriente.';label='Ley de Ohm · Resistencia';unit='Ω';
+ }
+ renderPhysicsResult(`${nf(result)} ${unit}`,formula,sub,logic,label,'',{route:['physics','circuits','ohm'],fields:{ohmV:$('ohmV').value,ohmI:$('ohmI').value,ohmR:$('ohmR').value}});
+}
+function solveKirchhoffLoop(){
+ const ids=['kVs','kV1','kV2','kV3'],labels=['Fuente Vs','Caída V1','Caída V2','Caída V3'];
+ const v=ids.map(fieldNum),blanks=[];
+ v.forEach((x,i)=>{if(!Number.isFinite(x))blanks.push(i)});
+ if(blanks.length>1)return physicsError('Deja vacío únicamente el valor que quieres calcular. Si alguna caída no existe, escribe 0.');
+ const formula='ΣV = 0  →  Vs − V1 − V2 − V3 = 0';
+ if(blanks.length===1){
+  const i=blanks[0];let r,sub,logic;
+  if(i===0){
+   r=v[1]+v[2]+v[3];
+   sub=`Vs = V1 + V2 + V3 = ${nf(v[1])} + ${nf(v[2])} + ${nf(v[3])} = ${nf(r)} V`;
+   logic='La fuente debe igualar la suma de todas las caídas de tensión de la malla cerrada.';
+  }else{
+   const rest=v.filter((_,k)=>k!==i&&k!==0).reduce((a,b)=>a+b,0);
+   r=v[0]-rest;
+   sub=`${labels[i]} = Vs − (demás caídas) = ${nf(v[0])} − ${nf(rest)} = ${nf(r)} V`;
+   logic='Aplicamos la ley de voltajes de Kirchhoff: la suma algebraica de tensiones en la malla es cero, así que la caída desconocida es la fuente menos las caídas conocidas.';
+  }
+  return renderPhysicsResult(`${labels[i]} = ${nf(r)} V`,formula,sub,logic,'Kirchhoff · Malla','',{route:['physics','circuits','kirchhoffLoop'],fields:{kVs:$('kVs').value,kV1:$('kV1').value,kV2:$('kV2').value,kV3:$('kV3').value}});
+ }
+ const res=v[0]-v[1]-v[2]-v[3],ok=Math.abs(res)<1e-9;
+ const head=ok?'Malla balanceada: ΣV = 0':(res>0?`Falta una caída de ${nf(res)} V`:`Las caídas superan a la fuente en ${nf(-res)} V`);
+ const logic=ok?'La suma de las caídas coincide exactamente con la fuente, por lo que la malla cumple la ley de voltajes de Kirchhoff.':(res>0?'La suma de las caídas es menor que la fuente: el valor restante corresponde al elemento que falta por registrar.':'Las caídas ingresadas superan a la fuente; revisa los signos o los valores, porque la malla no cumple ΣV = 0.');
+ renderPhysicsResult(head,formula,`${nf(v[0])} − ${nf(v[1])} − ${nf(v[2])} − ${nf(v[3])} = ${nf(res)} V`,logic,'Kirchhoff · Malla','',{route:['physics','circuits','kirchhoffLoop'],fields:{kVs:$('kVs').value,kV1:$('kV1').value,kV2:$('kV2').value,kV3:$('kV3').value}});
+}
+function solveKirchhoffNode(){
+ const ids=['knI1','knI2','knI3'],labels=['I1 (entra)','I2 (entra)','I3 (sale)'];
+ const v=ids.map(fieldNum),blanks=[];
+ v.forEach((x,i)=>{if(!Number.isFinite(x))blanks.push(i)});
+ if(blanks.length>1)return physicsError('Completa al menos dos corrientes y deja vacía solo la que quieres calcular.');
+ const formula='ΣI entran = ΣI salen  →  I1 + I2 = I3 + …';
+ if(blanks.length===1){
+  const i=blanks[0];let r,sub,logic;
+  if(i===2){
+   r=v[0]+v[1];
+   sub=`I3 = I1 + I2 = ${nf(v[0])} + ${nf(v[1])} = ${nf(r)} A`;
+   logic='Toda la corriente que entra al nodo debe salir por él, por lo que la salida es la suma de las entradas.';
+  }else{
+   const otra=i===0?v[1]:v[0];
+   r=v[2]-otra;
+   sub=`${labels[i]} = I3 − ${i===0?'I2':'I1'} = ${nf(v[2])} − ${nf(otra)} = ${nf(r)} A`;
+   logic='Por conservación de la carga, la entrada desconocida es la corriente de salida menos la entrada conocida.';
+  }
+  return renderPhysicsResult(`${labels[i]} = ${nf(r)} A`,formula,sub,logic,'Kirchhoff · Nodo','',{route:['physics','circuits','kirchhoffNode'],fields:{knI1:$('knI1').value,knI2:$('knI2').value,knI3:$('knI3').value}});
+ }
+ const falta=v[0]+v[1]-v[2];
+ const head=Math.abs(falta)<1e-12?'Nodo equilibrado: ΣI entran = ΣI salen':(falta>0?`I4 (salida restante) = ${nf(falta)} A`:`Sobran ${nf(-falta)} A de salida: falta corriente de entrada`);
+ const logic=Math.abs(falta)<1e-12?'Las corrientes entrantes y salientes se compensan exactamente, así que el nodo cumple la ley de corrientes de Kirchhoff.':(falta>0?'La corriente que entra supera a la registrada como salida; la diferencia es la corriente que debe salir por la rama restante.':'La corriente de salida supera a la de entrada; revisa los valores o agrega la corriente entrante que falta.');
+ renderPhysicsResult(head,formula,`I1 + I2 − I3 = ${nf(v[0])} + ${nf(v[1])} − ${nf(v[2])} = ${nf(falta)} A`,logic,'Kirchhoff · Nodo','',{route:['physics','circuits','kirchhoffNode'],fields:{knI1:$('knI1').value,knI2:$('knI2').value,knI3:$('knI3').value}});
+}
+
+function format(n){return Number(n).toLocaleString('es-CO',{maximumFractionDigits:8})}
+
+function addSubject(){
+ state.subjects.push({name:'Nueva materia',notes:[{value:3.5,weight:100}]});save();renderSubjects();toast('Materia agregada');
+}
+function renderSubjects(){
+ const box=$('subjects');
+ if(!state.subjects.length){box.innerHTML='<div class="empty">No hay materias. Usa “Agregar Materia” para comenzar.</div>';return}
+ box.innerHTML=state.subjects.map((s,i)=>`<div class="panel" style="margin-top:14px;margin-bottom:0">
+ <div class="formgrid"><label>Materia<input value="${esc(s.name)}" oninput="state.subjects[${i}].name=this.value;save()"></label><div></div></div>
+ <div id="notes_${i}">${s.notes.map((n,j)=>`<div class="subject-row">
+ <label>Nota<input type="number" min="1" max="5" step=".01" value="${n.value}" oninput="state.subjects[${i}].notes[${j}].value=parseFloat(this.value)||0;save()"></label>
+ <label>Ponderación %<input type="number" min="0" max="100" step=".01" value="${n.weight}" oninput="state.subjects[${i}].notes[${j}].weight=parseFloat(this.value)||0;save()"></label>
+ <div class="muted">Corte ${j+1}</div><button class="btn remove" onclick="removeNote(${i},${j})">Eliminar</button></div>`).join('')}</div>
+ <div class="actions"><button class="btn" onclick="addNote(${i})">+ Agregar corte</button><button class="btn danger" onclick="removeSubject(${i})">Eliminar materia</button></div>
+ </div>`).join('');
+}
+function addNote(i){state.subjects[i].notes.push({value:3.5,weight:0});save();renderSubjects()}
+function removeNote(i,j){state.subjects[i].notes.splice(j,1);if(!state.subjects[i].notes.length)state.subjects[i].notes.push({value:3.5,weight:100});save();renderSubjects()}
+function removeSubject(i){state.subjects.splice(i,1);save();renderSubjects();calculateGrades()}
+function calculateGrades(){
+ if(!state.subjects.length){$('gradeResult').innerHTML='<div class="empty">Agrega al menos una materia.</div>';return}
+ let invalid=false;
+ let rows=state.subjects.map(s=>{let total=s.notes.reduce((a,n)=>a+n.weight,0);if(s.notes.some(n=>n.value<1||n.value>5)||total<=0){invalid=true;return [s.name,0,total]}let avg=s.notes.reduce((a,n)=>a+n.value*n.weight,0)/total;return [s.name,avg,total]});
+ if(invalid){$('gradeResult').innerHTML='<div class="result error">Revisa las notas: deben estar entre 1.0 y 5.0 y cada materia debe tener ponderación mayor que 0.</div>';return}
+ let overall=rows.reduce((a,r)=>a+r[1],0)/rows.length;
+ $('gradeResult').innerHTML=`<div class="result"><strong>Promedio general: ${format(overall)}</strong><div class="steps">${overall>=3.5?'Estado: aprobación (3.5 o superior).':'Estado: por debajo de la nota de aprobación (3.5).'}</div><table class="table" style="margin-top:12px"><thead><tr><th>Materia</th><th>Promedio</th><th>Ponderación registrada</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${format(r[1])}</td><td>${format(r[2])}%</td></tr>`).join('')}</tbody></table></div>`;
+ addHistory('grades',{label:'Rendimiento general',value:`promedio ${format(overall)}`});
+}
+function simulateGrade(){
+ const c=parseFloat($('gCurrent').value),w=parseFloat($('gWeight').value),t=parseFloat($('gTarget').value);
+ if(!Number.isFinite(c)||c<1||c>5||!Number.isFinite(w)||w<0||w>=100||!Number.isFinite(t)||t<1||t>5){$('gradeSim').innerHTML='<div class="result error">Usa notas entre 1.0 y 5.0 y un porcentaje cursado entre 0% y 99.99%.</div>';return}
+ const remaining=100-w,req=(t-(c*w/100))/(remaining/100);
+ let msg=req<=1?'La meta es alcanzable incluso con 1.0 en lo restante.':req>5?'La meta requiere más de 5.0; no es alcanzable con el porcentaje restante.':`Necesitas aproximadamente ${format(req)} en el porcentaje restante.`;
+ $('gradeSim').innerHTML=`<div class="result"><strong>${msg}</strong><div class="steps">Meta: ${format(t)} · Nota acumulada: ${format(c)} · Cursado: ${format(w)}% · Restante: ${format(remaining)}%.</div></div>`;
+ addHistory('goal',{label:'Simulación de meta',value:`meta ${format(t)} → requerida ${format(req)}`,restore:{route:['grades','goal'],fields:{gCurrent:$('gCurrent').value,gWeight:$('gWeight').value,gTarget:$('gTarget').value}}});
+}
+function clearGrades(){if(confirm('¿Eliminar todas las materias y notas?')){state.subjects=[];save();renderSubjects();$('gradeResult').innerHTML='';}}
+renderSubjects();
+
+function addBudgetEntry(){
+ const type=$('bType').value,amount=parseFloat($('bAmount').value),cat=$('bCategory').value.trim()||'Sin categoría',desc=$('bDesc').value.trim();
+ if(!Number.isFinite(amount)||amount<0){toast('Ingresa un monto válido');return}
+ state.budget.push({id:Date.now(),type,amount,cat,desc,date:new Date().toLocaleDateString('es-CO')});save();
+ $('bAmount').value='';$('bDesc').value='';renderBudget();toast(type==='income'?'Ingreso registrado':'Gasto registrado');
+}
+function renderBudget(){
+ const income=state.budget.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0),expense=state.budget.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0),balance=income-expense;
+ $('budgetMetrics').innerHTML=`<div class="box"><span class="muted">Ingresos</span><b>${format(income)}</b></div><div class="box"><span class="muted">Gastos</span><b>${format(expense)}</b></div><div class="box"><span class="muted">Disponible</span><b>${format(balance)}</b></div>`;
+ const total=income+expense,p=(total?income/total*100:50);$('budgetDonut').style.background=`conic-gradient(var(--primary) 0 ${p}%,var(--primary2) ${p}% 100%)`;
+ $('budgetLegend').innerHTML=`<div><span class="dot"></span>Ingresos: ${format(income)}</div><div><span class="dot v"></span>Gastos: ${format(expense)}</div><div>Disponibilidad mensual: <strong>${format(balance)}</strong></div>`;
+ $('budgetList').innerHTML=state.budget.length?`<table class="table"><thead><tr><th>Tipo</th><th>Monto</th><th>Categoría</th><th>Descripción</th><th>Fecha</th><th></th></tr></thead><tbody>${state.budget.slice().reverse().map(x=>`<tr><td>${x.type==='income'?'Ingreso':'Gasto'}</td><td>${format(x.amount)}</td><td>${esc(x.cat)}</td><td>${esc(x.desc)}</td><td>${x.date}</td><td><button class="btn danger" onclick="removeBudget(${x.id})">×</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Aún no hay ingresos ni gastos registrados.</div>';
+}
+function removeBudget(id){state.budget=state.budget.filter(x=>x.id!==id);save();renderBudget()}
+function clearBudget(){if(confirm('¿Eliminar todo el presupuesto?')){state.budget=[];save();renderBudget()}}
+renderBudget();
+
+const unitDefs={
+ 'Longitud':{units:{m:1,km:1000,cm:.01,mm:.001,mi:1609.344,ft:.3048},labels:{m:'Metros',km:'Kilómetros',cm:'Centímetros',mm:'Milímetros',mi:'Millas',ft:'Pies'}},
+ 'Peso':{units:{kg:1,g:.001,mg:.000001,lb:.45359237,oz:.0283495},labels:{kg:'Kilogramos',g:'Gramos',mg:'Miligramos',lb:'Libras',oz:'Onzas'}},
+ 'Volumen':{units:{l:1,ml:.001,m3:1000,gal:3.785411784},labels:{l:'Litros',ml:'Mililitros',m3:'Metros cúbicos',gal:'Galones (US)'}},
+ 'Velocidad':{units:{ms:1,kmh:1/3.6,mph:.44704,kn:0.514444},labels:{ms:'m/s',kmh:'km/h',mph:'mph',kn:'Nudos'}},
+ 'Temperatura':{units:null,labels:{C:'Celsius',F:'Fahrenheit',K:'Kelvin'}}
+};
+let unitType='Longitud';
+$('unitTabs').innerHTML=Object.keys(unitDefs).map((n,i)=>`<button class="btn ${i===0?'active':''}" onclick="selectUnit('${n}',this)">${n}</button>`).join('');
+function selectUnit(n,el){unitType=n;const bs=Array.from(document.querySelectorAll('#unitTabs button'));bs.forEach(b=>b.classList.remove('active'));const t=el||bs.filter(b=>b.textContent===n)[0];if(t)t.classList.add('active');renderUnit();renderHistory('unit')}
+function renderUnit(){
+ const d=unitDefs[unitType],opts=Object.entries(d.labels).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+ $('unitForm').innerHTML=`<div class="formgrid three"><label>Cantidad<input id="uAmount" type="number" value="1" step="any"></label><label>De<select id="uFrom">${opts}</select></label><label>A<select id="uTo">${opts}</select></label></div><div class="actions"><button class="btn primary" onclick="convertUnit()">Convertir</button></div><div id="unitResult"></div><div id="unitHistory"></div>`;
+}
+function tempToC(v,u){return u==='C'?v:u==='F'?(v-32)*5/9:v-273.15}
+function cToTemp(v,u){return u==='C'?v:u==='F'?v*9/5+32:v+273.15}
+function convertUnit(){
+ const v=parseFloat($('uAmount').value),a=$('uFrom').value,b=$('uTo').value;if(!Number.isFinite(v))return;
+ const d=unitDefs[unitType];
+ let r;if(unitType==='Temperatura')r=cToTemp(tempToC(v,a),b);else{r=v*d.units[a]/d.units[b]}
+ $('unitResult').innerHTML=`<div class="result"><strong>${format(r)} ${unitDefs[unitType].labels[b]}</strong></div>`;addHistory('unit',{label:unitType,value:`${format(v)} ${d.labels[a]} → ${format(r)} ${d.labels[b]}`,restore:{route:['utilities','units'],unitType:unitType,fields:{uAmount:$('uAmount').value,uFrom:a,uTo:b}}});
+}
+renderUnit();renderHistory('unit');
+
+const fallbackCurrencies={COP:'Peso colombiano',USD:'Dólar estadounidense',EUR:'Euro',GBP:'Libra esterlina',MXN:'Peso mexicano',BRL:'Real brasileño',JPY:'Yen japonés',CLP:'Peso chileno',ARS:'Peso argentino',CAD:'Dólar canadiense',CHF:'Franco suizo',CNY:'Yuan chino',AUD:'Dólar australiano'};
+const fxPriority=['COP','USD','EUR'];let fxCurrencies={...fallbackCurrencies};let fxReady=false;
+function currencyName(code){try{return new Intl.DisplayNames(['es'],{type:'currency'}).of(code)||code}catch(_){return fallbackCurrencies[code]||code}}
+function renderCurrencySelectors(){const order=[...fxPriority,...Object.keys(fxCurrencies).filter(k=>!fxPriority.includes(k)).sort()];const opts=order.map(k=>`<option value="${k}">${k} — ${esc(fxCurrencies[k]||currencyName(k))}</option>`).join('');$('fxFrom').innerHTML=opts;$('fxTo').innerHTML=opts;$('fxFrom').value='COP';$('fxTo').value='USD'}
+async function loadCurrencies(){setFXStatus('loading','Cargando monedas disponibles…');try{const res=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();if(data.result!=='success')throw new Error('API');fxCurrencies={};Object.keys(data.rates||{}).forEach(code=>fxCurrencies[code]=currencyName(code));renderCurrencySelectors();fxReady=true;setFXStatus('ok',`Monedas actualizadas · base USD · última actualización: ${data.time_last_update_utc||'no indicada'}`)}catch(e){renderCurrencySelectors();setFXStatus('error','No se pudo actualizar la lista; se muestran monedas de respaldo. Intenta convertir nuevamente.')}}
+function setFXStatus(kind,msg){const el=$('fxStatus');if(!el)return;el.innerHTML=`<span class="status-dot ${kind==='ok'?'':kind==='loading'?'loading':'error'}"></span><span>${esc(msg)}</span>`}
+async function convertFX(){const amount=Number($('fxAmount').value),from=$('fxFrom').value,to=$('fxTo').value;if(!Number.isFinite(amount))return showFXError('Ingresa una cantidad válida.');setFXStatus('loading','Consultando la tasa más reciente disponible…');try{if(from===to){renderFXResult(amount,1,from,to,'Misma moneda',new Date().toUTCString());setFXStatus('ok','Conversión directa · tasa 1.');return}const res=await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();if(data.result!=='success'||typeof data.rates?.[to]!=='number')throw new Error('Par no disponible');const rate=data.rates[to],result=amount*rate;renderFXResult(result,rate,from,to,data.time_last_update_utc||'Fecha no indicada',data.time_next_update_utc);setFXStatus('ok',`Tasa actualizada · ${data.time_last_update_utc||'fecha no indicada'}`)}catch(e){showFXError('No fue posible obtener la tasa en este momento. Verifica tu conexión e inténtalo de nuevo.');setFXStatus('error','Error al consultar la API de tasas.')}}
+function renderFXResult(result,rate,from,to,updated,next){$('fxResult').innerHTML=`<div class="result"><strong>${format(result)} ${esc(to)}</strong><div class="steps">${format(Number($('fxAmount').value))} ${esc(from)} → ${format(result)} ${esc(to)}<br>1 ${esc(from)} = ${format(rate)} ${esc(to)}<br><b>Última actualización de la tasa:</b> ${esc(updated)}${next?`<br><b>Próxima actualización estimada:</b> ${esc(next)}`:''}</div></div>`;addHistory('fx',{label:'Divisas',value:`${$('fxAmount').value} ${from} → ${format(result)} ${to} · tasa ${format(rate)}`,restore:{route:['utilities','fx'],fields:{fxAmount:$('fxAmount').value,fxFrom:from,fxTo:to}}})}
+function showFXError(msg){$('fxResult').innerHTML=`<div class="result error">${esc(msg)}</div>`}
+renderCurrencySelectors();renderHistory('fx');loadCurrencies();
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+initApp();
+</script>
+</body>
+</html>
